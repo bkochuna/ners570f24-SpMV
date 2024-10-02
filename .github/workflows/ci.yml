@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  main:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: true
+      matrix:
+        build_type: [Debug, Release]
+
+    name: "${{matrix.build_type}}"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+                -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build
+        run: make -C build
+
+      - name: Run tests
+        run: CTEST_OUTPUT_ON_FAILURE=ON make -C build test
