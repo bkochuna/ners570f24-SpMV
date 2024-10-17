@@ -1,4 +1,4 @@
-#include "SparseMatrix.hpp"
+#include "../include/SparseMatrix.hpp"
 
 #include <iostream>
 
@@ -6,7 +6,7 @@ namespace SpMV
 {
     
     template <class fp_type>
-    SparseMatrix<fp_type>::SparseMatrix(const int nrows, const int ncols) :
+    SparseMatrix<fp_type>::SparseMatrix(const size_t nrows, const size_t ncols) :
         _nrows(nrows), _ncols(ncols)
     {
         assert(this->_state == undefined);
@@ -24,7 +24,7 @@ namespace SpMV
     }
 
     template <class fp_type>
-    void SparseMatrix<fp_type>::setCoefficient(const size_t row, const size_t col, const fp_type aij)
+    void SparseMatrix<fp_type>::setCoefficient(const size_t row, const size_t col, const fp_type values)
     {
         assert(this->_state != undefined);
         assert(col < this->_ncols);
@@ -33,10 +33,10 @@ namespace SpMV
         this->_state = building;
 
         //Store value
-        this->_buildCoeff[std::make_pair(row,col)] = aij;
+        this->_buildCoeff[std::make_pair(row,col)] = values;
         this->_nnz = this->_buildCoeff.size();
 
-        std::cout << "i,j,aij    " << row << ',' << col << ',' << aij << '\n';
+        std::cout << "i,j,aij    " << row << ',' << col << ',' << values << '\n';
 
         assert(this->_state == building);
     }
