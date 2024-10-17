@@ -23,7 +23,7 @@ namespace SpMV
         std::map<std::pair<size_t, size_t>, fp_type> _buildCoeff;
 
     public:
-        SparseMatrix(const int nrows, const int ncols);
+        SparseMatrix(const size_t nrows, const size_t ncols);
         virtual ~SparseMatrix();
 
         inline size_t      getNumRows()     const { return _nrows; };
@@ -32,6 +32,6 @@ namespace SpMV
         inline MatrixState getState()       const { return _state; };
 
         void setCoefficient(const size_t row, const size_t col, const fp_type aij);
-        virtual void assembleStorage() =0;
+        //virtual void assembleStorage() =0;
     }; // class SparseMatrix
 } // namespace SpMV
