@@ -2,6 +2,7 @@
 
 #include "SparseMatrix.hpp"
 #include <cassert> // For assert
+#include <memory>  // For std::unique_ptr
 
 namespace SpMV
 {
@@ -9,9 +10,9 @@ namespace SpMV
     class SparseMatrix_JDS : public SparseMatrix<fp_type>
     {
     private:
-        size_t* perm = nullptr;  // Array holding permutation indices
-        size_t* jds_col_ptr = nullptr;  // Array holding JDS column pointers
-        fp_type* jds_values = nullptr;  // Array holding non-zero values
+        std::unique_ptr<size_t[]> perm; // Array holding permutation indices
+        std::unique_ptr<size_t[]> jds_col_ptr; // Array holding JDS column pointers
+        std::unique_ptr<fp_type[]> jds_values; // Array holding non-zero values
 
         // Sizes of the respective arrays
         size_t perm_size = 0;

@@ -5,12 +5,11 @@
 namespace SpMV
 {
     // Default constructor
-    // Initializes the base class with 0 rows and columns, and sets array pointers to nullptr and sizes to 0
+    // Initializes the base class with 0 rows and columns
     template <class fp_type>
     SparseMatrix_JDS<fp_type>::SparseMatrix_JDS()
         : SparseMatrix<fp_type>::SparseMatrix(0, 0),
-          perm(nullptr), jds_col_ptr(nullptr), jds_values(nullptr),
-          perm_size(0), jds_col_size(0), jds_val_size(0)
+        perm_size(0), jds_col_size(0), jds_val_size(0)
     {
         std::cout << "Hello from SparseMatrix_JDS Default Constructor!\n";
     }
@@ -28,22 +27,22 @@ namespace SpMV
     {
         std::cout << "Hello from SparseMatrix_JDS Parameterized Constructor!\n";
 
-        // Allocate and copy perm array
+        // Allocate and copy perm array using std::make_unique
         if (perm_size > 0) {
-            perm = new size_t[perm_size];
-            std::memcpy(perm, p_perm, perm_size * sizeof(size_t));
+            perm = std::make_unique<size_t[]>(perm_size);
+            std::memcpy(perm.get(), p_perm, perm_size * sizeof(size_t));
         }
 
-        // Allocate and copy jds_col_ptr array
+        // Allocate and copy jds_col_ptr array using std::make_unique
         if (jds_col_size > 0) {
-            jds_col_ptr = new size_t[jds_col_size];
-            std::memcpy(jds_col_ptr, p_jds_col_ptr, jds_col_size * sizeof(size_t));
+            jds_col_ptr = std::make_unique<size_t[]>(jds_col_size);
+            std::memcpy(jds_col_ptr.get(), p_jds_col_ptr, jds_col_size * sizeof(size_t));
         }
 
-        // Allocate and copy jds_values array
+        // Allocate and copy jds_values array using std::make_unique
         if (jds_val_size > 0) {
-            jds_values = new fp_type[jds_val_size];
-            std::memcpy(jds_values, p_jds_values, jds_val_size * sizeof(fp_type));
+            jds_values = std::make_unique<fp_type[]>(jds_val_size);
+            std::memcpy(jds_values.get(), p_jds_values, jds_val_size * sizeof(fp_type));
         }
 
         // Call assembleStorage after initializing members
@@ -56,10 +55,7 @@ namespace SpMV
     SparseMatrix_JDS<fp_type>::~SparseMatrix_JDS()
     {
         std::cout << "Hello from SparseMatrix_JDS Destructor!\n";
-
-        delete[] perm;
-        delete[] jds_col_ptr;
-        delete[] jds_values;
+        // No need to manually delete memory; std::unique_ptr takes care of it.
     }
 
     // Placeholder for assembleStorage method
