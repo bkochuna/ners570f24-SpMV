@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SparseMatrix.hpp"
+#include <vector>
 
 namespace SpMV
 {
@@ -8,14 +9,9 @@ namespace SpMV
     class SparseMatrix_DEN : public SparseMatrix<fp_type>
     {
     private:
-        size_t *nrows = nullptr;
-        size_t *ncols = nullptr;
-        size_t *nnz   = nullptr;
-        fp_type *A_mat  = nullptr;
+        std::vector<std::vector<fp_type>> A_mat;
 
     public:
         SparseMatrix_DEN(const int nrows, const int ncols);
-        void assembleStorage() {};
-        void disassembleStorage() {};
     }; // class SparseMatrix_DEN
 } // namespace SpMV
