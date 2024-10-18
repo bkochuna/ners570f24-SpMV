@@ -9,6 +9,7 @@ namespace SpMV
          SparseMatrix<fp_type>::SparseMatrix(nrows, ncols)
     {
         std::cout << "Hello from SparseMatrix_DEN Constructor!\n";
+        
     }
 
     template class SparseMatrix_DEN<float>;

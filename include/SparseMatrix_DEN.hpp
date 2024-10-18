@@ -13,5 +13,6 @@ namespace SpMV
 
     public:
         SparseMatrix_DEN(const int nrows, const int ncols);
+        SparseMatrix_DEN();
     }; // class SparseMatrix_DEN
 } // namespace SpMV
