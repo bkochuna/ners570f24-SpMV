@@ -10,11 +10,11 @@ int main()
 {
   std::cout << "Hello World!\n";
 
-  SpMV::SparseMatrix<float>* ptr_A = new SpMV::SparseMatrix_COO<float>(1, 5);
+  SpMV::SparseMatrix<float>* ptr_A = new SpMV::SparseMatrix_DEN<float>(1, 5);
 
   // New scoping unit. This means variables defined in here, stay here.
   {
-    SpMV::SparseMatrix_COO<double> A = SpMV::SparseMatrix_COO<double>(2,2);
+    SpMV::SparseMatrix_DEN<double> A = SpMV::SparseMatrix_DEN<double>(2,2);
     A.setCoefficient(1, 1, 1.0);
 
   }
