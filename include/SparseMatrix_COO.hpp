@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SparseMatrix.hpp" // inherit from abstact SparseMatrix class
+#include <vector>
 
 namespace SpMV
 {
@@ -22,6 +23,11 @@ namespace SpMV
         size_t* getRowIndices() const {return I;}
         size_t* getColIndices() const {return J;}
         fp_type* getValues() const {return val;}
+
+        /// some future interfaces:
+        void viewCOO() const;
+        std::vector<fp_type> matvec_COO(const std::vector<fp_type>& vec) const;
+
         /// finish add
 
         void assembleStorage() {};
