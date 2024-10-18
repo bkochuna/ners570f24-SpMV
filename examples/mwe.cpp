@@ -17,10 +17,14 @@ int main()
     SpMV::SparseMatrix_COO<double> A = SpMV::SparseMatrix_COO<double>(2,2);
     A.setCoefficient(1, 1, 1.0);
 
-  }
+  }// once out of scoping unit, will automatically goto destruction
+
   ptr_A->setCoefficient(0, 3, 4.0);
 
   delete(ptr_A);
+
+  // Use default constructor (creates a 1x1 matrix)
+  SpMV::SparseMatrix_COO<float> A;
 
   return 0;
 }
