@@ -19,7 +19,7 @@ namespace SpMV
         const int nrows, const int ncols,
         const std::vector<size_t>& p_perm,
         const std::vector<size_t>& p_jds_col_ptr,
-        const std::vector<fp_type>& p_jds_values)
+        const std::vector<fp_type>& p_jds_values,
         const std::vector<size_t>& p_jd_ptr)
         : SparseMatrix<fp_type>::SparseMatrix(nrows, ncols),
           perm(p_perm),

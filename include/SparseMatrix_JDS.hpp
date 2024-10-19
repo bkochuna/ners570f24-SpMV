@@ -24,7 +24,7 @@ namespace SpMV
         SparseMatrix_JDS(const int nrows, const int ncols,
                          const std::vector<size_t>& perm,
                          const std::vector<size_t>& jds_col_ptr,
-                         const std::vector<fp_type>& jds_values);
+                         const std::vector<fp_type>& jds_values,
                          const std::vector<size_t>& jd_ptr);
 
         ~SparseMatrix_JDS() = default; // Default destructor, as std::vector handles its own memory
