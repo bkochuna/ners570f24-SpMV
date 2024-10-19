@@ -13,6 +13,8 @@ namespace SpMV
         std::vector<size_t> perm;         // Vector holding permutation indices
         std::vector<size_t> jds_col_ptr;  // Vector holding JDS column pointers
         std::vector<fp_type> jds_values;  // Vector holding non-zero values
+        std::vector<size_t> jd_ptr;      // Vector holding row pointers
+
 
     public:
         // Default constructor
@@ -23,6 +25,7 @@ namespace SpMV
                          const std::vector<size_t>& perm,
                          const std::vector<size_t>& jds_col_ptr,
                          const std::vector<fp_type>& jds_values);
+                         const std::vector<size_t>& jd_ptr);
 
         ~SparseMatrix_JDS() = default; // Default destructor, as std::vector handles its own memory
 

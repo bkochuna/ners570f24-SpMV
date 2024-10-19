@@ -20,10 +20,12 @@ namespace SpMV
         const std::vector<size_t>& p_perm,
         const std::vector<size_t>& p_jds_col_ptr,
         const std::vector<fp_type>& p_jds_values)
+        const std::vector<size_t>& p_jd_ptr)
         : SparseMatrix<fp_type>::SparseMatrix(nrows, ncols),
           perm(p_perm),
           jds_col_ptr(p_jds_col_ptr),
-          jds_values(p_jds_values)
+          jds_values(p_jds_values),
+          jd_ptr(p_jd_ptr)
     {
         std::cout << "Hello from SparseMatrix_JDS Parameterized Constructor!\n";
 
