@@ -38,6 +38,6 @@ namespace SpMV
         inline const std::vector<size_t>& getPerm() const { return perm; };                // access the vector holding permutation indices in read-only mode
         inline const std::vector<size_t>& getJdsColPtr() const { return jds_col_ptr; };    // access the vector holding JDS column pointers in read-only mode
         inline const std::vector<fp_type>& getJdsValues() const { return jds_values; };    // access the vector holding non-zero values in read-only mode
-        // inline const std::vector<size_t>& getJdPtr() const { return jd_ptr; }           // access the vector holding the element id from when next col. starts (WHEN DEFINED!) in read-only mode
+        inline const std::vector<size_t>& getJdPtr() const { return jd_ptr; };           // access the vector holding the element id from when next col. starts (WHEN DEFINED!) in read-only mode
     };
 } // namespace SpMV
