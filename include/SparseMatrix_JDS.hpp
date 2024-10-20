@@ -3,7 +3,8 @@
 #include "SparseMatrix.hpp"
 #include <cassert> // For assert
 #include <vector>  // For std::vector
-#include <algorithm> // For std::find
+#include <numeric> // For std::iota, std::find
+#include <algorithm> // For std::stable_sort
 
 namespace SpMV
 {
@@ -15,6 +16,7 @@ namespace SpMV
         std::vector<size_t> jds_col_ptr;  // Vector holding JDS column pointers
         std::vector<fp_type> jds_values;  // Vector holding non-zero values
         std::vector<size_t> jd_ptr;      // Vector holding row pointers
+        size_t max_nz_row;                // Maximum number of non-zero elements in a row
 
 
     public:
@@ -46,5 +48,17 @@ namespace SpMV
         inline const size_t getNCols() const { return this->_ncols; };   // number of columns in matrix in read-only mode
         // Returning specific value given [i,j] index
         const fp_type getVal(const size_t rowId, const size_t colId) const;  // access the element value in [rowId,colId] in read-only mode
+
+        // Utility sorting methods to use during assembly/disassembly
+        template <typename T>
+        inline void sortIndicesDescending(const std::vector<T> &v, std::vector<size_t> &idx) {
+            // Initialize original index locations
+            idx.resize(v.size());
+            std::iota(idx.begin(), idx.end(), 0);
+
+            // Sort indices based on comparing values in v
+            // Use stable sort so that if two elements are equal, their original order is preserved
+            std::stable_sort(idx.begin(), idx.end(), [&v](size_t i1, size_t i2) {return v[i1] > v[i2];});
+        }
     };
 } // namespace SpMV
