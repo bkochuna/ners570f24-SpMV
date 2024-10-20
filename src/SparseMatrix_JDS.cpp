@@ -188,7 +188,7 @@ namespace SpMV
         size_t indx = std::numeric_limits<size_t>::max();  // default is invalid index
         
         // find the index of the rowID in perm
-        auto it = std::find(perm.begin(),perm.end(),rowID);
+        auto it = std::find(perm.begin(),perm.end(),rowId);
         size_t rid = std::distance(perm.begin(),it); // rid is always defined since assert condition ensures this
         for(size_t j=0;j<jd_ptr.size();j++)
         {

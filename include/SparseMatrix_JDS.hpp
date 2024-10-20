@@ -44,8 +44,8 @@ namespace SpMV
         inline const std::vector<fp_type> getJdsValues() const { return jds_values; };    // access the vector holding non-zero values in read-only mode
         inline const std::vector<size_t> getJdPtr() const { return jd_ptr; };             // access the vector holding the row pointers in read-only mode
         // Returning the SparseMatrix attributes
-        inline const size_t getNRows() const { return this->_nrows; };   // number of rows in matrix in read-only mode
-        inline const size_t getNCols() const { return this->_ncols; };   // number of columns in matrix in read-only mode
+        inline size_t getNRows() const { return this->_nrows; };   // number of rows in matrix in read-only mode
+        inline size_t getNCols() const { return this->_ncols; };   // number of columns in matrix in read-only mode
         // Returning specific value given [i,j] index
         const fp_type getVal(const size_t rowId, const size_t colId) const;  // access the element value in [rowId,colId] in read-only mode
 
