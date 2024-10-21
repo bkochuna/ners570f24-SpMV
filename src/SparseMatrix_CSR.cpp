@@ -3,7 +3,10 @@
 #include <vector>
 #include <iostream>
 
-namespace SpMV
+// yulupeng: I'm doing the CSR constructor/destructor test 2024/10/21:
+    // for who is doing "add a CSR class": where is the default constructor and destructor??
+
+namespace SpMV 
 {
     template <class fp_type>
     SparseMatrix_CSR<fp_type>::SparseMatrix_CSR(const size_t nrows, const size_t ncols) :
