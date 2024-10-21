@@ -9,7 +9,7 @@ namespace SpMV
     // ==================================================================
     template <class fp_type>
     SparseMatrix<fp_type>::SparseMatrix(const int nrows, const int ncols) :
-        _nrows(nrows), _ncols(ncols)
+        _nrows( static_cast<size_t>(nrows) ), _ncols( static_cast<size_t>(ncols))
     {
         assert(this->_state == undefined);
         std::cout << "Hello from SparseMatrix Constructor!\n";
