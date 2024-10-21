@@ -10,9 +10,9 @@ namespace SpMV
     // protected members of SparseMatrix (_nrows, _ncols, _nnz) are accessible in SparseMatrix_COO
     {
     private:
-        size_t *I    = nullptr;
-        size_t *J    = nullptr;
-        fp_type *val = nullptr;
+        size_t *idx_row    = nullptr;
+        size_t *idx_col    = nullptr;
+        fp_type *aij = nullptr;
 
     public:
         SparseMatrix_COO(const int nrows, const int ncols); // Parametrized Constructor
@@ -20,15 +20,16 @@ namespace SpMV
         SparseMatrix_COO(); // default constructor
         ~SparseMatrix_COO();
         /// getter (optional)
-        size_t* getRowIndices() const {return I;}
-        size_t* getColIndices() const {return J;}
-        fp_type* getValues() const {return val;}
+        size_t* getRowIndices() const {return idx_row;}
+        size_t* getColIndices() const {return idx_col;}
+        fp_type* getValues() const {return aij;}
 
-        /// some future interfaces:
+        /// some future interfaces (uncomment when implemented):
         void viewCOO() const;
-        std::vector<fp_type> matvec_COO(const std::vector<fp_type>& vec) const;
+        // std::vector<fp_type> matvec_COO(const std::vector<fp_type>& vec) const;
 
         /// finish add
+        fp_type getCoefficient(const size_t row, const size_t col) const;
 
         void assembleStorage() {};
     }; // class SparseMatrix_COO
