@@ -12,6 +12,95 @@ namespace SpMV
         colIdx.reserve(nrows);
         values.reserve(nrows);
     }
+    // asssemble storage for CSR
+    template <typename fp_type>
+    void SparseMatrix_CSR<fp_type>::assembleStorage()
+    {
+        // Ensure the matrix is in the "building" state
+        if (this->_state != building)
+        {
+            std::cerr << "Error: Matrix not in building state during assembly\n";
+            assert(false);
+            return;
+        }
+        std::cout << "Hello from CSR_assembleStorage"<< std::endl;
+        // Step 1: Initialize rowIdx to correct size (nrows + 1)
+        rowIdx.resize(this->_nrows + 1, 0);
+
+        // Step 2: Count non-zeros per row using the COO data in _buildCoeff
+        for (auto& entry : this->_buildCoeff)
+        {
+            size_t row = entry.first.first;  // Row index from COO format
+            rowIdx[row + 1]++;               // Increment the count for this row
+        }
+
+        // Step 3: Cumulative sum to construct rowIdx (CSR row pointer)
+        for (size_t i = 1; i <= this->_nrows; ++i)
+        {
+            rowIdx[i] += rowIdx[i - 1];
+        }
+
+        // Step 4: Allocate memory for values[] and colIdx[]
+        values.resize(this->_buildCoeff.size());
+        colIdx.resize(this->_buildCoeff.size());
+
+        // Step 5: Populate values[] and colIdx[] using the COO data
+        std::vector<size_t> row_pos(this->_nrows, 0); // To track current position in each row
+        for (auto& entry : this->_buildCoeff)
+        {
+            size_t row = entry.first.first;     // Row index from COO data
+            size_t col = entry.first.second;    // Column index from COO data
+            fp_type value = entry.second;       // Value from COO data
+
+            size_t index = rowIdx[row] + row_pos[row];  // Calculate index in values[] and colIdx[]
+            values[index] = value;
+            colIdx[index] = col;
+
+            row_pos[row]++;  // Move to the next position in this row
+        }
+
+        // Step 6: Clear the _buildCoeff map since we've now assembled the CSR format
+        this->_buildCoeff.clear();
+
+        // Step 7: Mark the matrix as assembled
+        this->_state = assembled;
+    }
+
+    // dissamble storage for CSR
+    template <typename fp_type>
+    void SparseMatrix_CSR<fp_type>::disassembleStorage()
+    {
+        // Ensure the matrix is in the "assembled" state before disassembly
+        if (this->_state != assembled)
+        {
+            std::cerr << "Error: Matrix not in assembled state during disassembly\n";
+            assert(false);
+            return;
+        }
+        std::cout << "Hello from CSR_dissassembleStorage"<< std::endl;
+        // Change the state to "building" so that we can modify the matrix
+        this->_state = building;
+
+        // Step 1: Rebuild the _buildCoeff map from CSR format
+        for (size_t row = 0; row < this->_nrows; ++row)
+        {
+            for (size_t i = rowIdx[row]; i < rowIdx[row + 1]; ++i)
+            {
+                size_t col = colIdx[i];     // Column index from CSR
+                fp_type value = values[i];  // Non-zero value from CSR
+
+                // Store the (row, col, value) tuple in the _buildCoeff map (COO format)
+                this->_buildCoeff[{row, col}] = value;
+            }
+        }
+
+        // Step 2: Clear CSR-specific data since we've now disassembled to COO format
+        values.clear();
+        colIdx.clear();
+        rowIdx.clear();
+    }
+
+
 
     // Correct implementation of viewCSR
     template <class fp_type>
