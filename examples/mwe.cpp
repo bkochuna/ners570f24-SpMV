@@ -10,7 +10,7 @@ int main()
 {
   std::cout << "Hello World!\n";
 
-  SpMV::SparseMatrix<float>* ptr_A = new SpMV::SparseMatrix_COO<float>(1, 5);
+  SpMV::SparseMatrix_COO<float>* ptr_A = new SpMV::SparseMatrix_COO<float>(1, 5);
 
   // New scoping unit. This means variables defined in here, stay here.
   {
@@ -20,6 +20,8 @@ int main()
   }// once out of scoping unit, will automatically goto destruction
 
   ptr_A->setCoefficient(0, 3, 4.0);
+
+  std::cout<<"Value at (0,3) ="<<ptr_A->getCoefficient(0,3)<<std::endl;
 
   delete(ptr_A);
 
