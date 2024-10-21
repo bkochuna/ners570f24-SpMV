@@ -74,7 +74,12 @@ namespace SpMV
         this->_state = building;
         assert(this->_state == building);
     }
-
+    /*
+     * This method prints the content of the matrix to the command line and to a file.
+     * It requires that the matrix is built or assembles and will throw an error if the
+     * matrix is only initialized. 
+     * R equires that the nrows, ncols, I, J, val variables all are set
+     */
     template <class fp_type>
     void SparseMatrix_COO<fp_type>::viewCOO() const
     {
