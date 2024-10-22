@@ -176,54 +176,7 @@ namespace SpMV
         assert(false);
     }
 
-    // Accessor to access the element value in [rowId,colId] in read-only mode
-    template <class fp_type>
-    const fp_type SparseMatrix_JDS<fp_type>::getVal(const size_t rowId, const size_t colId) const
-    {
-        // ensure requested rowID and colID are valid
-        assert(rowId < this->_nrows);
-        assert(colId < this->_ncols);
-
-        // define req. index in jds_values as indx
-        size_t indx = std::numeric_limits<size_t>::max();  // default is invalid index
-        
-        // find the index of the rowID in perm
-        auto it = std::find(perm.begin(),perm.end(),rowId);
-        size_t rid = std::distance(perm.begin(),it); // rid is always defined since assert condition ensures this
-        for(size_t j=0;j<jd_ptr.size();j++)
-        {
-            size_t cid = jd_ptr[j] + rid;
-            if (cid < jds_col_ptr.size())
-            {
-                if (j!=jd_ptr.size()-1 && cid < jd_ptr[j+1] )
-                {
-                    if(jds_col_ptr[cid]==colId)
-                    {
-                        indx = cid;
-                        break;
-                    }
-                }
-                else{
-                    if(jds_col_ptr[cid]==colId)
-                    {
-                        indx = cid;
-                        break;
-                    }
-                }
-            } 
-        }
-
-        if (indx==std::numeric_limits<size_t>::max())
-        {
-            std::cout << "No value stored in value array corr. to ["<< rowId <<","<<colId<<"]. Assuming it to be 0 and returning 0"<< std::endl;
-            return static_cast<fp_type>(0);
-        }
-        else
-        {
-            std::cout << "Value stored in value array corr. to ["<< rowId <<","<<colId<<"]. Returning it"<< std::endl;
-            return jds_values[indx];
-        }
-    }
+    
 
     // Explicitly instantiate the template classes for float and double types
     template class SparseMatrix_JDS<float>;
