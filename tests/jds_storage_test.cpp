@@ -1,9 +1,10 @@
-#include <SpMV.hpp>
-
+#include "../include/SpMV.hpp"
+#include <iostream>
 #include <vector> // std::vector
 
 // Testing library required for testing (Always include this last!)
 #include "unit_test_framework.hpp"
+#include "../include/SparseMatrix_JDS.hpp"
 
 // Use ASSERT(condition) to test if a condition is true.
 // Direct comparison of floating point numbers is not recommended, so we define
@@ -11,111 +12,153 @@
 // other.
 
 // Create a unit test
-TEST_CASE(compareVectors)
+// start with templating
+const float eps = .0000001
+template <typename fp_type>
+TEST_CASE(testJDSAssembleStorage) 
 {
-
+  // test the getters
+  // turn off warnings
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wfloat-equal"
+  #pragma GCC diagnostic pop
+  // call the class in the header file, SparseMatrix_JDS
+  SparseMatrix_JDS = jds
   // Initialize variables for testing
-  std::vector<int> const a = {1, 2, 3};
-  std::vector<int> const b = {1, 2, 3};
+  // permutation index (row), column index, value in the index
+  std::vector<size_t> const perm = {0, 1, 2};
+  std::vector<size_t> const colIdx = {1, 2, 1, 2, 1};
+  std::vector<fp_type> const values = {2., 4., 6., 8., 10.};
+  
+  // call assemble storage
+  jsd.assembleStorage(perm,colIdx,values);
+  // perform unit tests
+  // build testing arrays. should be the values from the assembled jds class
+  std::vector<size_t> const perm_test = {0, 2, 3};
+  std::vector<size_t> const colIdx_test = {0, 1, 1, 2, 2};
+  std::vector<fp_type> const values_test = {2., 4., 8., 6., 10.};
 
-  // Test that the elements are equal
-  //rsshast: I don't know if this is necessary
-  for (size_t i = 0; i < a.size(); ++i) {
-    ASSERT(a[i] == b[i]);
-  }
+  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
+  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
+  ASSERT_NEAR(jds.getValues(), values_test, eps);
 
-  // Repeat for floating point numbers
-  std::vector<double> x = {1, 2, 3};
-  std::vector<double> y = {1, 2, 3.00001};
+} // testJDSAssembleStorage
 
-  // One should avoid floating point equality comparisons due to rounding errors
-  // We will briefly turn off compiler warnings about this to demonstrate why
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wfloat-equal"
-  //
-  // In ℝ (real numbers), 0.1 + 0.2 == 0.3
-  // However, in finite precision binary arithmetic, 0.1 + 0.2 != 0.3
-  // In binary 0.1 is an irrational number, hence in finite precision it is
-  // truncated, incuring a rounding error.
-  //rsshast: this is unnecessary to include because of DBC
-  ASSERT(0.1 + 0.2 != 0.3); // Will evaluate to true if 0.1 + 0.2 != 0.3
-#pragma GCC diagnostic pop
 
-  // Instead, we can test if the numbers are within a small epsilon of each
-  // other
-  for (size_t i = 0; i < x.size(); ++i) {
-    ASSERT_NEAR(x[i], y[i], 1e-3);
-  }
-} // compareVectors
+template <typename fp_type>
+TEST_CASE(testJDSAssembleStorageSym) 
+{
+  // test case for symmetric matrices
+  // test the getters
+  // turn off warnings
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wfloat-equal"
+  #pragma GCC diagnostic pop
+  // call the class in the header file, SparseMatrix_JDS
+  SparseMatrix_JDS = jds;
+  // Initialize variables for testing. MUST USE SIZE_T'S
+  // permutation index (row), column index, value in the index
+  std::vector<size_t> const perm = {0, 1, 2};
+  std::vector<size_t> const colIdx = {0, 0, 1, 1, 2, 2};
+  std::vector<fp_type> const values = {2., 4., 6., 8., 10., 12.};
+  
+  // call assemble storage
+  jsd.assembleStorage(perm,colIdx,values);
+  // perform unit tests
+  // build testing arrays. should be the values from the assembled jds class
+  std::vector<size_t> const perm_test = {0, 2, 4};
+  std::vector<size_t> const colIdx_test = {0, 0, 1, 1, 2, 2};
+  std::vector<fp_type> const values_test = {2., 4., 6., 8., 10., 12.};
+
+  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
+  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
+  ASSERT_NEAR(jds.getValues(), values_test, eps);
+}//testJDSAssembleStorageSym
+
+template <typename fp_type>
+TEST_CASE(testJDSAssembleStorageEmptyRow) 
+{
+  // test case for symmetric matrices
+  // test the getters
+  // turn off warnings
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wfloat-equal"
+  #pragma GCC diagnostic pop
+  // call the class in the header file, SparseMatrix_JDS
+  SparseMatrix_JDS = jds;
+  // Initialize variables for testing. MUST USE SIZE_T'S
+  // permutation index (row), column index, value in the index
+  std::vector<size_t> const perm = {0, 1, 2};
+  std::vector<size_t> const colIdx = {0, 0, 1};
+  std::vector<fp_type> const values = {2., 4., 6.};
+  
+  // call assemble storage
+  jsd.assembleStorage(perm,colIdx,values);
+  // perform unit tests
+  // build testing arrays. should be the values from the assembled jds class
+  std::vector<size_t> const perm_test = {0, 2, 4};
+  std::vector<size_t> const colIdx_test = {0, 0, 1};
+  std::vector<fp_type> const values_test = {2., 4., 6.};
+
+  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
+  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
+  ASSERT_NEAR(jds.getValues(), values_test, eps);
+} //testJDSAssembleStorageEmptyRow
+
+template <typename fp_type>
+TEST_CASE(testJDSdisassembleStorage) 
+{
+  // test the getters
+  // turn off warnings
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wfloat-equal"
+  #pragma GCC diagnostic pop
+  // call the class in the header file, SparseMatrix_JDS
+  SparseMatrix_JDS = jds;
+  // Initialize variables for testing
+  // permutation index (row), column index, value in the index
+  std::vector<size_t> const perm = {0, 1, 2};
+  std::vector<size_t> const colIdx = {1, 2, 1, 2, 1};
+  std::vector<fp_type> const values = {2., 4., 6., 8., 10.};
+  
+  // call assemble storage
+  jsd.assembleStorage(perm,colIdx,values);
+  // perform unit tests
+  // build testing arrays. should be the values from the assembled jds class
+  std::vector<size_t> const perm_test = {0, 2, 3};
+  std::vector<size_t> const colIdx_test = {0, 1, 1, 2, 2};
+  std::vector<fp_type> const values_test = {2., 4., 8., 6., 10.};
+
+  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
+  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
+  ASSERT_NEAR(jds.getValues(), values_test, eps);
+
+  // now check disassemble storage
+  auto [perm_dis, colIdx_dis, values_dis] = jds.disassembleStorage();
+  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
+  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
+  ASSERT_NEAR(jds.getValues(), values_test, eps);
+
+} // testJDSDisassembleStorage
+
 
 // Create a test suite
-TEST_SUITE(my_suite)
+TEST_SUITE(JDS_storage) 
 {
   // Run the unit test when the suite is run
-  TEST(compareVectors);
+  TEST(testJDSAssembleStorage);
+  TEST(testJDSAssembleStorageSym);
+  TEST(testJDSAssembleStorageEmptyRow);
+  TEST(testJDSDisassembleStorage);
 } // my_suite
-
-// We can also create templated tests and suites
-// rsshast: this is all unnecessary
-template <typename T>
-TEST_CASE(addition)
-{
-  T const a = 1;
-  T const b = 2;
-  T const c = 3;
-  ASSERT(a + b == c);
-} // addition
-
-template <typename T>
-TEST_CASE(subtraction) {
-  T const a = 3;
-  T const b = 2;
-  T const c = 1;
-  ASSERT(a - b == c);
-} // subtraction
-
-template <size_t N, typename T>
-TEST_CASE(fixed_size_dot_product) {
-  // Create an array of N 1's and an array of N 2's
-  T a[N];
-  T b[N];
-  for (size_t i = 0; i < N; ++i) {
-    a[i] = 1;
-    b[i] = 2;
-  }
-
-  // Compute the dot product
-  T dot = 0;
-  for (size_t i = 0; i < N; ++i) {
-    dot += a[i] * b[i];
-  }
-
-  // Compare to the solution
-  T const soln = 2 * N;
-  ASSERT(dot == soln);
-} // fixed_size_dot_product
-
-template <typename T>
-TEST_SUITE(add_sub_suite)
-{
-  TEST(addition<T>);
-  TEST(subtraction<T>);
-  // Use parentheses to pass a function with multiple template arguments.
-  // This is necessary because a comma is used to separate arguments in a
-  // template argument list as well as arguments to a macro
-  TEST((fixed_size_dot_product<3, T>));
-  TEST((fixed_size_dot_product<4, T>));
-} // add_sub_suite
 
 auto
 main() -> int
 {
   // Run the unit tests. If a test fails, the program will print failure info
   // and return 1.
-  // rsshast: this works for both int and size_t, which is good, but you never call the
-  // accessor!
-  RUN_SUITE(my_suite);
-  RUN_SUITE(add_sub_suite<int>);
-  RUN_SUITE(add_sub_suite<size_t>);
-  return 0;
+  // run for floats and doubles
+  RUN_SUITE(JDS_storage<float>);
+  RUN_SUITE(JDS_storage<double>);
+  return 0; 
 }
