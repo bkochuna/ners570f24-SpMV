@@ -1,4 +1,5 @@
 #include <SpMV.hpp>
+#include <SparseMatrix_CSR.hpp>
 
 #include <vector> // std::vector
 
@@ -10,47 +11,49 @@
 // ASSERT_NEAR(a, b, epsilon) to test if a and b are within epsilon of each
 // other.
 
+// Test Matrix:
+// [1.0 3.0   
+//  0.0 2.0]   
+//
+//  nrows = 3
+//  ncols = 4
+//  nnz   = 2
+//  aij   = <1.0 3.0 2.0>
+//  ja    = <0   1   0  >
+//  ia    = <0   2   3  >
+//
+
 // Create a unit test
-TEST_CASE(compareVectors) 
+TEST_CASE(jaAccessor) 
 {
 
-  // Initialize variables for testing
-  std::vector<int> const a = {1, 2, 3};
-  std::vector<int> const b = {1, 2, 3};
+  // Initialize reference variable for testing
+  std::vector<int> const ja_ref = {0, 1, 0};
+
+  // Initialize test matrix
+  SpMV::SparseMatrix_CSR<double> test_mat = SpMV::SparseMatrix_CSR<double>(2, 2);
+ 
+  // Assign values
+  test_mat.setCoefficient(0, 0, 1 .0); 
+  test_mat.setCoefficient(0, 1, 3 .0); 
+  test_mat.setCoefficient(1, 0, 0 .0); 
+  test_mat.setCoefficient(1, 1, 2 .0); 
+
+  // Access ja
+  ja_test = test_mat.get_ja();
 
   // Test that the elements are equal
-  for (size_t i = 0; i < a.size(); ++i) {
-    ASSERT(a[i] == b[i]); 
+  for (size_t i = 0; i < ja_ref.size(); ++i) {
+    ASSERT(ja_ref[i] == ja_test[i]); 
   }
   
-  // Repeat for floating point numbers
-  std::vector<double> x = {1, 2, 3};
-  std::vector<double> y = {1, 2, 3.00001};
-
-  // One should avoid floating point equality comparisons due to rounding errors
-  // We will briefly turn off compiler warnings about this to demonstrate why
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wfloat-equal"
-  //
-  // In ℝ (real numbers), 0.1 + 0.2 == 0.3
-  // However, in finite precision binary arithmetic, 0.1 + 0.2 != 0.3
-  // In binary 0.1 is an irrational number, hence in finite precision it is
-  // truncated, incuring a rounding error.
-  ASSERT(0.1 + 0.2 != 0.3); // Will evaluate to true if 0.1 + 0.2 != 0.3
-#pragma GCC diagnostic pop
-
-  // Instead, we can test if the numbers are within a small epsilon of each
-  // other
-  for (size_t i = 0; i < x.size(); ++i) {
-    ASSERT_NEAR(x[i], y[i], 1e-3); 
-  }
-} // compareVectors
+} // jaAccessor
 
 // Create a test suite
-TEST_SUITE(my_suite) 
+TEST_SUITE(non_templated) 
 {
   // Run the unit test when the suite is run
-  TEST(compareVectors);
+  TEST(jaAccessor);
 } // my_suite
 
 // We can also create templated tests and suites
@@ -109,7 +112,7 @@ main() -> int
 {
   // Run the unit tests. If a test fails, the program will print failure info
   // and return 1.
-  RUN_SUITE(my_suite);
+  RUN_SUITE(non_templated);
   RUN_SUITE(add_sub_suite<int>);
   RUN_SUITE(add_sub_suite<size_t>);
   return 0; 
