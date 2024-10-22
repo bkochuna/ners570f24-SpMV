@@ -22,5 +22,7 @@ namespace SpMV
 	inline size_t getNumRows() const { return this->_nrows; };
 	inline size_t getNumCols() const { return this->_ncols; };
 	fp_type getCoefficient(const size_t row, const size_t col) const;
+
+    void matvec(std::vector<fp_type>& b, const std::vector<fp_type>& x);
     }; // class SparseMatrix_DEN
 } // namespace SpMV
