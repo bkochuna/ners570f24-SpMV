@@ -44,7 +44,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     
     // total number of non-zero elements
     size_t nnz = n;
-    for (int i=0;i<f;i++)
+    for (size_t i=0;i<f;i++)
     {
         nnz += 2*(n - d*(i+1));
     }
@@ -63,10 +63,10 @@ TEST_CASE(banded_nxn_mdiag_deld)
     for(size_t i=0;i<n;i++)
     {
         nnz_r = 0;
-        for(size_t j=-1*f;j<f+1;j++)
+        for(int j=-1*f;j<f+1;j++)
         {
-            cid = i + j*d;
-            if (cid >-1 && cid <n)
+            cid = static_cast<int>(i) + j*static_cast<int>(d);
+            if (cid >-1 && cid <static_cast<int>(n))
             {
                 cidd = static_cast<size_t>(cid);
                 ptr_A->setCoefficient(i, cidd, static_cast<T>(1+abs(j)));
@@ -89,13 +89,13 @@ TEST_CASE(banded_nxn_mdiag_deld)
     for(size_t i=0;i<n;i++)
     {
         nnz_c = 0;
-        for(size_t j=-1*f;j<f+1;j++)
+        for(int j=-1*f;j<f+1;j++)
         {
-            cid = i + j*d;
-            if (cid >-1 && cid <n)
+            cid = static_cast<int>(i) + j*static_cast<int>(d);
+            if (cid >-1 && cid <static_cast<int>(n))
             {
                 colIdx_req[id] = cid;
-                val_req[id] = 1+abs(j);
+                val_req[id] = static_cast<fp_type>(1+abs(j));
                 id += 1;
                 nnz_c +=1;
             } 
@@ -128,7 +128,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     {
         if((*colIdx_obt)[i] == -1)
         {
-            ASSERT((*val_obt_obt)[i] == 0); 
+            ASSERT((*val_obt)[i] == 0); 
         }
     
     }
@@ -137,7 +137,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     {
         if((*colIdx_obt)[i] != -1)
         {
-            ASSERT((*val_obt_obt)[i] != 0); 
+            ASSERT((*val_obt)[i] != 0); 
         }
     
     }
@@ -152,7 +152,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     }
    
    // Test that both val are same element wise
-    for (size_t i = 0; i < val_obt.size(); ++i) 
+    for (size_t i = 0; i < val_obt->size(); ++i) 
     {
     ASSERT_NEAR((*val_obt)[i], val_req[i], 1e-5); 
     }
@@ -213,10 +213,10 @@ TEST_CASE(banded_nxn_r0)
     {
         nnz_r = 0;
         if(i!=r){
-        for(size_t j=-1*f;j<f+1;j++)
+        for(int j=-1*f;j<f+1;j++)
         {
-            cid = i + j*d;
-            if (cid >-1 && cid <n)
+            cid = static_cast<int>(i) + j*static_cast<int>(d);
+            if (cid >-1 && cid <static_cast<int>(n))
             {
                 cidd = static_cast<size_t>(cid);
                 ptr_A->setCoefficient(i, cidd, static_cast<T>(1+abs(j)));
@@ -236,7 +236,7 @@ TEST_CASE(banded_nxn_r0)
     for (size_t i = r*lmax; i < (r+1)*lmax; ++i) 
     {
         ASSERT((*colIdx_obt)[i] == -1);
-        ASSERT((*val_obt)[i] == 0);
+        ASSERT_NEAR((*val_obt)[i],static_cast<fp_type>(0),1e-10);
     }
     
     // call disassembleStorage()
@@ -284,12 +284,12 @@ TEST_CASE(all0_but1)
         if (i!= r)
         {
             ASSERT((*colIdx_obt)[i] == -1);
-            ASSERT((*val_obt)[i] == 0);
+            ASSERT_NEAR((*val_obt)[i],static_cast<fp_type>(0),1e-10);
         }
         else
         {
-            ASSERT((*colIdx_obt)[i] == c);
-            ASSERT((*val_obt)[i] == 1);
+            ASSERT((*colIdx_obt)[i] == static_cast<int>(c));
+            ASSERT_NEAR((*val_obt)[i],static_cast<fp_type>(1),1e-10);
         }
         
     }
@@ -321,11 +321,11 @@ TEST_CASE(all0)
     // access the ELL quantities
     std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
     std::vector<T>* val_obt = ptr_A->getVal();
-    size_t lmax = ptr_A->getLmax();
+    //size_t lmax = ptr_A->getLmax();
     
     // assert that the pointers are null pointers
     ASSERT( colIdx_obt->empty());
-    ASSERT( colIdx_obt->empty());
+    ASSERT( val_obt->empty());
 
     // call disassembleStorage() and assert the matrix state
     ptr_A->disassembleStorage();
