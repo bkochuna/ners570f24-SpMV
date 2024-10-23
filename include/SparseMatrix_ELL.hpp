@@ -24,6 +24,7 @@ namespace SpMV
         // needs but the basic class doesn't include.
         //
         size_t  lmax    =   0;                                  // Max row length
+        size_t  nnzs    =   0;                                  // number of nonzeros
         size_t  *colIdx =   nullptr;                            // ELL column indice
         fp_type *val    =   nullptr;                            // ELL values
 
