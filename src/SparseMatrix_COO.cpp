@@ -25,18 +25,62 @@ namespace SpMV
     template <class fp_type> //destructor
     SparseMatrix_COO<fp_type>::~SparseMatrix_COO()
     {
-        delete[] this->I;
-        delete[] this->J;
-        delete[] this->val;
+        delete[] this->_I;
+        delete[] this->_J;
+        delete[] this->_val;
         std::cout << "Hello from SparseMatrix_COO Destructor!\n";
     }
 
+    template <class fp_type> // assemble storage
+    void SparseMatrix_COO<fp_type>::assembleStorage()
+    {
+        assert(this->_state == building);
+
+        this->_I = new size_t[this->_nnz*sizeof(size_t)];
+        this->_J = new size_t[this->_nnz*sizeof(size_t)];
+        this->_val = new fp_type[this->_nnz*sizeof(fp_type)];
+
+        int index = 0;
+        for (const auto& aij : this->_buildCoeff)
+        {
+            this->_I[index] = aij.first.first;
+            this->_J[index] = aij.first.second;
+            this->_val[index] = aij.second;
+            index += index;
+        }
+        this->_buildCoeff.clear();
+
+        this->_state = assembled;
+        assert(this->_state == assembled);
+    }
+
+    template <class fp_type> // disassemble storage
+    void SparseMatrix_COO<fp_type>::disassembleStorage()
+    {
+        assert(this->_state == assembled);
+
+        size_t len = this->_nnz; // setCoefficient updates _nnz each call
+        for (size_t index = 0; index < len; ++index)
+        {
+            this->_buildCoeff[std::make_pair(this->_I[index],this->_J[index])] = this->_val[index];
+        }
+        delete[] this->_I;
+        this->_I = nullptr;
+        delete[] this->_J;
+        this->_J = nullptr;
+        delete[] this->_val;
+        this->_val = nullptr;
+
+        this->_state = building;
+        assert(this->_state == building);
+    }
 
     template <class fp_type>
     void SparseMatrix_COO<fp_type>::viewCOO() const
     {
         std::cout << "Hello from view SparseMatrix_COO!\n";
     }
+
     template <class fp_type>
     std::vector<fp_type> SparseMatrix_COO<fp_type>::matvec_COO(const std::vector<fp_type>& vec) const
     {
