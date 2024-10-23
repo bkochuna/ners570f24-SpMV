@@ -1,22 +1,57 @@
 #pragma once
 
-#include "SpMV.hpp"
 #include "SparseMatrix_CSR.hpp"
 #include "unit_test_framework.hpp"
 #include <complex>
 
-namespace test_CSR_con_destruction {
+namespace test_CSR_storage{
 
-    // Test for default constructor (if it exists)
-    TEST_CASE(defaultConstructor) {
-        // try {
-        //     SpMV::SparseMatrix_CSR<double> csr_matrix; // Attempting to use a default constructor
-        //     ASSERT(false); // Should not reach here if default constructor is not allowed
-        // } catch (const std::invalid_argument& e) {
-        //     ASSERT(true); // Caught the invalid argument exception
-        // }
-        ASSERT(true);
+    TEST_CASE(dense_storage) {
+        SpMV::SparseMatrix_CSR<double> Mat = SpMV::SparseMatrix_CSR<double>(4,4);
+        Mat.setCoefficient(0,0,1.0);
+        Mat.setCoefficient(0,1,7.0);
+        Mat.setCoefficient(1,0,5.0);
+        Mat.setCoefficient(1,2,3.0);
+        Mat.setCoefficient(2,3,9.0);
+        Mat.setCoefficient(2,1,2.0);
+        Mat.setCoefficient(2,2,8.0);
+        Mat.setCoefficient(3,3,6.0);
+
+        // construct CSR matrix
+
+
+        ASSERT(); // check that values are appropriately assigned
+        
     }
+
+
+    TEST_CASE(sparse_storage) {
+        SpMV::SparseMatrix_CSR<double> Mat = SpMV::SparseMatrix_CSR<double>(4,4);
+        Mat.setCoefficient(0,0,1.0);
+        Mat.setCoefficient(0,1,7.0);
+        Mat.setCoefficient(1,0,5.0);
+        Mat.setCoefficient(1,2,3.0);
+        Mat.setCoefficient(2,3,9.0);
+        Mat.setCoefficient(2,1,2.0);
+        Mat.setCoefficient(2,2,8.0);
+        Mat.setCoefficient(3,3,6.0);
+
+        // construct CSR matrix
+
+
+        ASSERT(); // check that values are appropriately assigned
+        
+    }
+
+
+
+
+
+////////////////////////////////////////////////////////////////////
+
+
+
+
 
     // Test for parameterized constructor (valid inputs)
     TEST_CASE(parameterizedConstructor_Valid) {
@@ -59,12 +94,12 @@ namespace test_CSR_con_destruction {
 
     // Test for error handling: non-real element (if applicable)
     TEST_CASE(nonRealElementCheck) {
-        // try {
-        //     SpMV::SparseMatrix_CSR<std::complex<double>> csr_matrix(3, 3); // Complex numbers may not be allowed
-        //     ASSERT(false); 
-        // } catch (const std::invalid_argument& e) {
+        try {
+            SpMV::SparseMatrix_CSR<std::complex<double>> csr_matrix(3, 3); // Complex numbers may not be allowed
+            ASSERT(false); 
+        } catch (const std::invalid_argument& e) {
             ASSERT(true); 
-        // }
+        }
     }
 
     // Test for destructor (ensuring no memory leaks)

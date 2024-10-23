@@ -125,7 +125,7 @@ namespace SpMV
         for (size_t i = 0; i < nrows; ++i) {
             rowPtr[i + 1] += rowPtr[i];
         }
-
+ 
         // Build colIdx and values arrays in CSR format
         std::vector<size_t> next(nrows, 0);
         std::vector<size_t> csr_colIdx(nnz);
@@ -164,6 +164,40 @@ namespace SpMV
         }
         outFile.close();
     }
+
+    template <class fp_type>
+    void SparseMatrix_CSR<fp_type>::multyCSR(std::vector<fp_type> &b, std::vector<fp_type> const x) {
+        // Assume the COO format is already stored in rowIdx, colIdx, values        
+        // const size_t nnz = values.size();
+        const size_t nrows = this->_nrows;
+        const size_t ncols = this->_ncols;
+
+
+        if (b.size()!=nrows){
+            std::cout << "Error! The size of b must match the number of rows in the matrix.\n";
+            std::exit(1); // Terminate the program with exit status 1
+        }
+        if(x.size()!=ncols){
+            std::cout << "Error! The size of x must match the number of columns in the matrix.\n";
+            std::exit(1); // Terminate the program with exit status 1
+        }
+
+
+
+        for (size_t row = 0; row < nrows; ++row) {
+            for (size_t i = rowIdx[row]; i < rowIdx[row + 1]; ++i) {
+                
+                b[row]=b[row]+values[i]*x[colIdx[i]];
+
+
+            }
+        }
+
+
+
+    }
+
+
 
     // Explicit instantiation for float and double types
     template class SparseMatrix_CSR<float>;

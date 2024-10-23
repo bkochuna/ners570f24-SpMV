@@ -11,7 +11,7 @@ namespace SpMV{
         std::vector<size_t> rowIdx;
         std::vector<size_t> colIdx;
         std::vector<fp_type> values;
-
+ 
     public:
         SparseMatrix_CSR(const size_t nrows, const size_t ncols);
       
@@ -28,5 +28,6 @@ namespace SpMV{
         void viewCSR(); // View the CSR representation and output the full matrix
         void assembleStorage(); // Declare the implementation
         void disassembleStorage(); // Declare the implementation
+        void multyCSR(std::vector<fp_type> &b, std::vector<fp_type> const x); // Multiply matrix
     }; // class SparseMatrix_COO
 } // namespace SpMV
