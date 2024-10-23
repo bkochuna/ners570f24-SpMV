@@ -169,11 +169,32 @@ namespace SpMV
 
     // Placeholder for matvec method
     template <class fp_type>
-    void SparseMatrix_JDS<fp_type>::matvec(const fp_type* x, fp_type* y)
+    void SparseMatrix_JDS<fp_type>::matvec(std::vector<fp_type>& b, const std::vector<fp_type>& x)
     {
         // Placeholder implementation
-        std::cout << "matvec method called for SparseMatrix_JDS (Not Implemented)\n";
-        assert(false);
+        std::cout << "matvec method called for SparseMatrix_JDS\n";
+        //initialize b vector with 0.0
+        std::fill(b.begin(), b.end(), 0.0);
+        //loop through arrays to access matrix values and multiply by appropriate value in x vector
+        //have result assigned to b vector
+        for (size_t i = 0; i < this->max_nz_row; i++){
+            for (size_t j = this->jd_ptr(i), this->jd_ptr(i+1)-1, j++){
+                size_t k = j - this->jd_ptr[j]+1
+                b[this->perm[k]] += this->jds_values[j] * x[this->jds_col_ptr[j]]
+            }
+        }
+
+        //fortran ex code
+
+        //do i = 1, maxval(nnz_row)
+        //    ! Loop over the non-zero entries in this row
+        //    do j = iter(i), iter(i + 1) - 1
+        //        k = j - iter(i)+1
+        //        ! Accumulate the result
+        //        b(row_order(k)) = b(row_order(k)) + jds_val(j) * x(jds_cols(j))
+        //    end do
+        //end do
+
     }
 
     

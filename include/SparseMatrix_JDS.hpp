@@ -35,7 +35,7 @@ namespace SpMV
         // Placeholder method declarations
         void assembleStorage() override;
         void disassembleStorage();
-        void matvec(const fp_type* x, fp_type* y);
+        void matvec(std::vector<fp_type>& b, const std::vector<fp_type>& x);
 
         // Accessor methods
         // Returning the entire vectors
