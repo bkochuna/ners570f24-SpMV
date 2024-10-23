@@ -36,7 +36,7 @@ namespace SpMV
 
         void assembleStorage() {assert(false);};                // Assemble storage
         void MatVec() {assert(false);};                         // Multiplication
-        void view() {assert(false);}                            // View
+        void view();                            // View
 
     }; // class SparseMatrix_ELL
 } // namespace SpMV

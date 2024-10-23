@@ -44,6 +44,33 @@ namespace SpMV
         std::cout << "Byebye from SparseMatrix_ELL Destructor~\n";
     }
 
+    template <class fp_type>
+    void SparseMatrix_ELL<fp_type>::view()
+    {
+        assert(this->_state == assembled);
+        if(this->_nnz==0)
+        {
+            std::cout << "Matrix is empty." << std::endl;
+        }
+        else
+        {
+            for(size_t i=0;i<this->_nrows)
+            {
+                std::cout << "Col Indices: [";
+                for (size_t j = 0; j < this->lmax - 1; j++)
+                {
+                    std::cout << this->colIdx[this->lmax * i + j] << ", ";
+                }
+                std::cout << this->colIdx[this->lmax * i + this->lmax -1] << "], Values: [";
+                for (size_t j = 0; j < this->lmax - 1; j++)
+                {
+                    std::cout << this->val[this->lmax * i + j] << ", ";
+                }
+                std::cout << this->val[this->lmax * i + this->lmax -1] << "]" << std::endl;                
+            }
+        }
+    }
+
     template class SparseMatrix_ELL<float>;
     template class SparseMatrix_ELL<double>;
 } // namespace SpMV
