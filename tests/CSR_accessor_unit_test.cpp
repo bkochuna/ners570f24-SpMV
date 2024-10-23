@@ -28,19 +28,19 @@ TEST_CASE(jaAccessor)
 {
 
   // Initialize reference variable for testing
-  std::vector<int> const ja_ref = {0, 1, 0};
+  std::vector<size_t> const ja_ref = {0, 1, 0};
 
   // Initialize test matrix
   SpMV::SparseMatrix_CSR<double> test_mat = SpMV::SparseMatrix_CSR<double>(2, 2);
  
   // Assign values
-  test_mat.setCoefficient(0, 0, 1 .0); 
-  test_mat.setCoefficient(0, 1, 3 .0); 
-  test_mat.setCoefficient(1, 0, 0 .0); 
-  test_mat.setCoefficient(1, 1, 2 .0); 
+  test_mat.setCoefficient(0, 0, 1.0); 
+  test_mat.setCoefficient(0, 1, 3.0); 
+  test_mat.setCoefficient(1, 0, 0.0); 
+  test_mat.setCoefficient(1, 1, 2.0); 
 
   // Access ja
-  ja_test = test_mat.get_ja();
+  std::vector<size_t> ja_test = test_mat.getColIdx();
 
   // Test that the elements are equal
   for (size_t i = 0; i < ja_ref.size(); ++i) {
