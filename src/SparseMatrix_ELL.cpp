@@ -54,7 +54,7 @@ namespace SpMV
         }
         else
         {
-            for(size_t i=0;i<this->_nrows)
+            for(size_t i=0;i < this->_nrows; i++)
             {
                 std::cout << "Col Indices: [";
                 for (size_t j = 0; j < this->lmax - 1; j++)
