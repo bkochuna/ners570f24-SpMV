@@ -201,11 +201,76 @@ TEST_CASE(ValuesAccessor)
 } // ValuesAccessor
 
 template <typename T>
+TEST_CASE(NonZeroValueAccessor) 
+{
+
+  // Initialize reference variable for testing
+  T const Value_ref = 1;
+  T epsilon;
+  if constexpr (std::is_same<T, float>::value) {
+    epsilon = 0.001f; // Use the float literal with 'f' suffix
+  } else {
+    epsilon = 0.001;  // Default is double, so no suffix needed
+  }
+
+  // Initialize test matrix
+  SpMV::SparseMatrix_CSR<T> test_mat = SpMV::SparseMatrix_CSR<T>(2, 2);
+ 
+  // Assign values
+  test_mat.setCoefficient(0, 0, 1.0); 
+  test_mat.setCoefficient(0, 1, 3.0); 
+  //test_mat.setCoefficient(1, 0, 0.0); 
+  test_mat.setCoefficient(1, 1, 2.0); 
+
+  test_mat.assembleStorage();
+  
+  // Access Values
+  T Value_test = test_mat.getCSRvalue(0, 0);
+
+  // Test that the elements are equal
+  ASSERT_NEAR(Value_ref, Value_test, epsilon); 
+  
+} // NonZeroValueAccessor
+
+template <typename T>
+TEST_CASE(ZeroValueAccessor) 
+{
+
+  // Initialize reference variable for testing
+  T const Value_ref = 0;
+  T epsilon;
+  if constexpr (std::is_same<T, float>::value) {
+    epsilon = 0.001f; 
+  } else {
+    epsilon = 0.001; 
+  }
+
+  // Initialize test matrix
+  SpMV::SparseMatrix_CSR<T> test_mat = SpMV::SparseMatrix_CSR<T>(2, 2);
+ 
+  // Assign values
+  test_mat.setCoefficient(0, 0, 1.0); 
+  test_mat.setCoefficient(0, 1, 3.0); 
+  //test_mat.setCoefficient(1, 0, 0.0); 
+  test_mat.setCoefficient(1, 1, 2.0); 
+
+  test_mat.assembleStorage();
+  
+  // Access Value
+  T Value_test = test_mat.getCSRvalue(1, 0);
+
+  // Test that the elements are equal
+  ASSERT_NEAR(Value_ref, Value_test, epsilon); 
+
+} // ZeroValueAccessor
+
+template <typename T>
 TEST_SUITE(templated) 
 {
+  TEST(NonZeroValueAccessor<T>);
+  TEST(ZeroValueAccessor<T>);
   TEST(ValuesAccessor<T>);
 } // templated
-
 auto
 main() -> int
 {
