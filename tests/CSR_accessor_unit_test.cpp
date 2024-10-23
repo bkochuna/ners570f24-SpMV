@@ -38,6 +38,8 @@ TEST_CASE(NRowsAccessor)
   //test_mat.setCoefficient(1, 0, 0.0); 
   test_mat.setCoefficient(1, 1, 2.0); 
 
+  test_mat.assembleStorage();
+
   // Access nRows
   size_t NRows_test = test_mat.getNRows();
 
@@ -61,6 +63,8 @@ TEST_CASE(NColsAccessor)
   //test_mat.setCoefficient(1, 0, 0.0); 
   test_mat.setCoefficient(1, 1, 2.0); 
 
+  test_mat.assembleStorage();
+
   // Access NCols
   size_t NCols_test = test_mat.getNCols();
 
@@ -83,6 +87,8 @@ TEST_CASE(NumNonZerosAccessor)
   test_mat.setCoefficient(0, 1, 3.0); 
   //test_mat.setCoefficient(1, 0, 0.0); 
   test_mat.setCoefficient(1, 1, 2.0); 
+
+  test_mat.assembleStorage();
 
   // Access numNonZeros
   size_t NumNonZeros_test = test_mat.getNumNonZeros();
@@ -157,58 +163,48 @@ TEST_SUITE(non_templated)
   TEST(NumNonZerosAccessor);
   TEST(ColIdxAccessor);
   TEST(RowIdxAccessor);
-} // my_suite
+} // non_templated
 
 // We can also create templated tests and suites
 template <typename T>
-TEST_CASE(addition) 
+TEST_CASE(ValuesAccessor) 
 {
-  T const a = 1;
-  T const b = 2;
-  T const c = 3;
-  ASSERT(a + b == c);
-} // addition
 
-template <typename T>
-TEST_CASE(subtraction) {
-  T const a = 3;
-  T const b = 2;
-  T const c = 1;
-  ASSERT(a - b == c);
-} // subtraction
-
-template <size_t N, typename T>
-TEST_CASE(fixed_size_dot_product) {
-  // Create an array of N 1's and an array of N 2's
-  T a[N]; 
-  T b[N];
-  for (size_t i = 0; i < N; ++i) {
-    a[i] = 1;
-    b[i] = 2;
+  // Initialize reference variable for testing
+  std::vector<T> const Values_ref = {1.0, 3.0, 2.0};
+  T epsilon;
+  if constexpr (std::is_same<T, float>::value) {
+    epsilon = 0.001f; // Use the float literal with 'f' suffix
+  } else {
+    epsilon = 0.001;  // Default is double, so no suffix needed
   }
 
-  // Compute the dot product
-  T dot = 0;
-  for (size_t i = 0; i < N; ++i) {
-    dot += a[i] * b[i];
-  }
+  // Initialize test matrix
+  SpMV::SparseMatrix_CSR<T> test_mat = SpMV::SparseMatrix_CSR<T>(2, 2);
+ 
+  // Assign values
+  test_mat.setCoefficient(0, 0, 1.0); 
+  test_mat.setCoefficient(0, 1, 3.0); 
+  //test_mat.setCoefficient(1, 0, 0.0); 
+  test_mat.setCoefficient(1, 1, 2.0); 
 
-  // Compare to the solution
-  T const soln = 2 * N;
-  ASSERT(dot == soln);
-} // fixed_size_dot_product
+  test_mat.assembleStorage();
+  
+  // Access Values
+  std::vector<T> Values_test = test_mat.getValues();
+
+  // Test that the elements are equal
+  for (size_t i = 0; i < Values_ref.size(); ++i) {
+    ASSERT_NEAR(Values_ref[i], Values_test[i], epsilon); 
+  }
+  
+} // ValuesAccessor
 
 template <typename T>
-TEST_SUITE(add_sub_suite) 
+TEST_SUITE(templated) 
 {
-  TEST(addition<T>);
-  TEST(subtraction<T>);
-  // Use parentheses to pass a function with multiple template arguments.
-  // This is necessary because a comma is used to separate arguments in a
-  // template argument list as well as arguments to a macro
-  TEST((fixed_size_dot_product<3, T>));
-  TEST((fixed_size_dot_product<4, T>));
-} // add_sub_suite
+  TEST(ValuesAccessor<T>);
+} // templated
 
 auto
 main() -> int
@@ -216,7 +212,7 @@ main() -> int
   // Run the unit tests. If a test fails, the program will print failure info
   // and return 1.
   RUN_SUITE(non_templated);
-  RUN_SUITE(add_sub_suite<int>);
-  RUN_SUITE(add_sub_suite<size_t>);
+  RUN_SUITE(templated<float>);
+  RUN_SUITE(templated<double>);
   return 0; 
 }
