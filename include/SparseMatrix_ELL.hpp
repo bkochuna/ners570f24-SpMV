@@ -38,29 +38,28 @@ namespace SpMV
         void MatVec() {assert(false);};                         // Multiplication
         void view() {assert(false);}                            // View
 
-    }; // class SparseMatrix_ELL
 
-    // Accessor methods
+        // Accessor methods
     
-    // Accessor for lmax
-    size_t getLmax() const {
-        return lmax;
-    }
+        // Accessor for lmax
+        size_t getLmax() const {
+            return lmax;
+        }
 
-    // Accessor for nnzs
-    size_t getNnzs() const {
-        return nnzs;
-    }
+        // Accessor for nnzs
+        size_t getNnzs() const {
+            return nnzs;
+        }
 
-    // Accessor for colIdx
-    const size_t* getColIdx() const {
-        return colIdx; // Return pointer to colIdx
-    }
+        // Accessor for colIdx
+        const size_t* getColIdx() const {
+            return colIdx; // Return pointer to colIdx
+        }
 
-    // Accessor for val
-    const fp_type* getVal() const {
-        return val; // Return pointer to val
-    }
+        // Accessor for val
+        const fp_type* getVal() const {
+            return val; // Return pointer to val
+        }
 
-
+    }; // class SparseMatrix_ELL
 } // namespace SpMV
