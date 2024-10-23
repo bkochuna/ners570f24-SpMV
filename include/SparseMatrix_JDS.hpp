@@ -62,4 +62,4 @@ namespace SpMV
         }
     };
 } // namespace SpMV
->>>>>>>>> Temporary merge branch 2
+
