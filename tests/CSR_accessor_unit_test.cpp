@@ -23,6 +23,52 @@
 //  ia    = <0   2   3  >
 //
 
+TEST_CASE(NRowsAccessor) 
+{
+
+  // Initialize reference variable for testing
+  size_t const NRows_ref = 2;
+
+  // Initialize test matrix
+  SpMV::SparseMatrix_CSR<double> test_mat = SpMV::SparseMatrix_CSR<double>(2, 2);
+ 
+  // Assign values
+  test_mat.setCoefficient(0, 0, 1.0); 
+  test_mat.setCoefficient(0, 1, 3.0); 
+  //test_mat.setCoefficient(1, 0, 0.0); 
+  test_mat.setCoefficient(1, 1, 2.0); 
+
+  // Access nRows
+  size_t NRows_test = test_mat.getNRows();
+
+  // Test that the values are equal
+  ASSERT(NRows_ref == NRows_test); 
+  
+} // NRowsAccessor
+
+TEST_CASE(NColsAccessor) 
+{
+
+  // Initialize reference variable for testing
+  size_t const NCols_ref = 2;
+
+  // Initialize test matrix
+  SpMV::SparseMatrix_CSR<double> test_mat = SpMV::SparseMatrix_CSR<double>(2, 2);
+ 
+  // Assign values
+  test_mat.setCoefficient(0, 0, 1.0); 
+  test_mat.setCoefficient(0, 1, 3.0); 
+  //test_mat.setCoefficient(1, 0, 0.0); 
+  test_mat.setCoefficient(1, 1, 2.0); 
+
+  // Access NCols
+  size_t NCols_test = test_mat.getNCols();
+
+  // Test that the values are equal
+  ASSERT(NCols_ref == NCols_test); 
+  
+} // NColsAccessor
+
 TEST_CASE(NumNonZerosAccessor) 
 {
 
@@ -101,6 +147,8 @@ TEST_CASE(RowIdxAccessor)
 TEST_SUITE(non_templated) 
 {
   // Run the unit test when the suite is run
+  TEST(NRowsAccessor);
+  TEST(NColsAccessor);
   TEST(NumNonZerosAccessor);
   TEST(ColIdxAccessor);
   TEST(RowIdxAccessor);
