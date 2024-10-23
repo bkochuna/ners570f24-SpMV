@@ -13,7 +13,13 @@ namespace SpMV{
         std::vector<fp_type> values;
 
     public:
+        SparseMatrix_CSR();
         SparseMatrix_CSR(const size_t nrows, const size_t ncols);
+        SparseMatrix_CSR(const SparseMatrix_CSR& other);
+        SparseMatrix_CSR(SparseMatrix_CSR&& other) noexcept;
+        ~SparseMatrix_CSR() = default;
+        SparseMatrix_CSR& operator=(const SparseMatrix_CSR& other);
+        SparseMatrix_CSR& operator=(SparseMatrix_CSR&& other) noexcept;
       
         // Access the base matrix attributes from the Sparse Matrix Class
         inline size_t      getNumNonZeros() const { return this-> _nnz;}
