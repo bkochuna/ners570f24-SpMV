@@ -24,6 +24,7 @@ namespace SpMV
         // needs but the basic class doesn't include.
         //
         size_t  lmax    =   0;                                  // Max row length
+        size_t  nnzs    =   0;                                  // number of nonzeros
         size_t  *colIdx =   nullptr;                            // ELL column indice
         fp_type *val    =   nullptr;                            // ELL values
 
@@ -35,7 +36,7 @@ namespace SpMV
 
         void assembleStorage() {assert(false);};                // Assemble storage
         void MatVec() {assert(false);};                         // Multiplication
-        void view() {assert(false);}                            // View
+        void view();                            // View
 
     }; // class SparseMatrix_ELL
 } // namespace SpMV
