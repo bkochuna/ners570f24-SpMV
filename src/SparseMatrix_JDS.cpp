@@ -179,9 +179,9 @@ namespace SpMV
         //loop through arrays to access matrix values and multiply by appropriate value in x vector
         //have result assigned to b vector
         for (size_t i = 0; i < this->max_nz_row; i++){
-            for (size_t j = this->jd_ptr(i), this->jd_ptr(i+1)-1, j++){
-                size_t k = j - this->jd_ptr[j]+1
-                b[this->perm[k]] += this->jds_values[j] * x[this->jds_col_ptr[j]]
+            for (size_t j = this->jd_ptr[i]; this->jd_ptr[i+1]-1; j++){
+                size_t k = j - this->jd_ptr[j]+1;
+                b[this->perm[k]] += this->jds_values[j] * x[this->jds_col_ptr[j]];
             }
         }
 
