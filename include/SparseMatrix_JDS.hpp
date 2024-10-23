@@ -36,6 +36,7 @@ namespace SpMV
         void assembleStorage() override;
         void disassembleStorage();
         void matvec(std::vector<fp_type>& b, const std::vector<fp_type>& x);
+        void view() const;
 
         // Accessor methods
         // Returning the entire vectors

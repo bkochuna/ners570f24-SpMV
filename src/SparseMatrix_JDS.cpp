@@ -1,6 +1,7 @@
 #include "SparseMatrix_JDS.hpp"
 #include <iostream>
 #include <algorithm> // for std::find and std::distance
+#include <iomanip> // for JDS view output
 
 namespace SpMV
 {
@@ -248,7 +249,53 @@ namespace SpMV
             return jds_values[indx];
         }
     }
-    
+
+    // View method for JDS class
+    template <class fp_type>
+    void SparseMatrix_JDS<fp_type>::view() const
+    {
+        // Printed to stdout in a 4 colum format
+        // perm and jd_ptr are only printed on the same row
+        // as corresponding jds_col_ptr and jds_values
+        // i.e., the value pair pointed by jd_ptr as the
+        // beginning of a new row in the col and values arrays
+        // First column - perm
+        // Second column - jds_col_ptr
+        // Third column - jds_values
+        // Fourth column - jd_ptr
+
+        size_t colWidth = 20;
+        size_t permcount = 0;
+        std::cout << std::left; // Left align
+        std::cout << std::setw(colWidth) << "perm" << std::setw(colWidth) << "jds_col_ptr" << std::setw(colWidth) << "jds_values" << std::setw(colWidth) << "jd_ptr" << "\n";
+        for (size_t i = 0; i < this->max_nz_row; i++)
+        {
+            for (size_t j = this->jd_ptr[i]; j<this->jd_ptr[i+1]; j++)
+            {
+                if (j == this->jd_ptr[i])
+                {
+                    std::cout << std::setw(colWidth) << this->perm[permcount];
+                    permcount = permcount + 1;
+                }
+                else
+                {
+                    std:cout << std::setw(colWidth) << "";
+                }
+
+                std::cout << std::setw(colWidth) << this->jds_col_ptr[j];
+                std::cout << std::setw(colWidth) << this->jds_values[j];
+                
+                if (j == this->jd_ptr[i])
+                {
+                    std::cout << std::setw(colWidth) << jd_ptr[i] << "\n";
+                }
+                else
+                {
+                    std::cout << std::setw(colWidth) << "\n";
+                }
+            }
+        }
+    }
 
     // Explicitly instantiate the template classes for float and double types
     template class SparseMatrix_JDS<float>;
