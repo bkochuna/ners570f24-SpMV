@@ -15,15 +15,37 @@
 // [1.0 3.0   
 //  0.0 2.0]   
 //
-//  nrows = 3
-//  ncols = 4
-//  nnz   = 2
+//  nrows = 2
+//  ncols = 2
+//  nnz   = 3
 //  aij   = <1.0 3.0 2.0>
 //  ja    = <0   1   0  >
 //  ia    = <0   2   3  >
 //
 
-// Create a unit test
+TEST_CASE(NumNonZerosAccessor) 
+{
+
+  // Initialize reference variable for testing
+  size_t const NumNonZeros_ref = 3;
+
+  // Initialize test matrix
+  SpMV::SparseMatrix_CSR<double> test_mat = SpMV::SparseMatrix_CSR<double>(2, 2);
+ 
+  // Assign values
+  test_mat.setCoefficient(0, 0, 1.0); 
+  test_mat.setCoefficient(0, 1, 3.0); 
+  //test_mat.setCoefficient(1, 0, 0.0); 
+  test_mat.setCoefficient(1, 1, 2.0); 
+
+  // Access numNonZeros
+  size_t NumNonZeros_test = test_mat.getNumNonZeros();
+
+  // Test that the values are equal
+  ASSERT(NumNonZeros_ref == NumNonZeros_test); 
+  
+} // NumNonZerosAccessor
+
 TEST_CASE(ColIdxAccessor) 
 {
 
@@ -36,10 +58,10 @@ TEST_CASE(ColIdxAccessor)
   // Assign values
   test_mat.setCoefficient(0, 0, 1.0); 
   test_mat.setCoefficient(0, 1, 3.0); 
-  test_mat.setCoefficient(1, 0, 0.0); 
+  //test_mat.setCoefficient(1, 0, 0.0); 
   test_mat.setCoefficient(1, 1, 2.0); 
 
-  // Access ja
+  // Access ColIdx
   std::vector<size_t> ColIdx_test = test_mat.getColIdx();
 
   // Test that the elements are equal
@@ -61,10 +83,10 @@ TEST_CASE(RowIdxAccessor)
   // Assign values
   test_mat.setCoefficient(0, 0, 1.0); 
   test_mat.setCoefficient(0, 1, 3.0); 
-  test_mat.setCoefficient(1, 0, 0.0); 
+  //test_mat.setCoefficient(1, 0, 0.0); 
   test_mat.setCoefficient(1, 1, 2.0); 
 
-  // Access ja
+  // Access RowIdx
   std::vector<size_t> RowIdx_test = test_mat.getRowIdx();
 
   // Test that the elements are equal
@@ -79,6 +101,7 @@ TEST_CASE(RowIdxAccessor)
 TEST_SUITE(non_templated) 
 {
   // Run the unit test when the suite is run
+  TEST(NumNonZerosAccessor);
   TEST(ColIdxAccessor);
   TEST(RowIdxAccessor);
 } // my_suite
