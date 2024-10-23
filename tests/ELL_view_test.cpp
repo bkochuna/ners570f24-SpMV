@@ -179,10 +179,10 @@ TEST_CASE(ELLViewTest)
         // Col Indices: [2], Values: [-1e30]
         // Col Indices: [3], Values: [1e30]
         SpMV::SparseMatrix_ELL<float> ell_matrix(4, 4);
-        ell_matrix.setCoefficient(0, 0, 1e30);
-        ell_matrix.setCoefficient(1, 1, 1e-30);
-        ell_matrix.setCoefficient(2, 2, -1e30);
-        ell_matrix.setCoefficient(3, 3, 1e30);
+        ell_matrix.setCoefficient(0, 0, 1e30f);
+        ell_matrix.setCoefficient(1, 1, 1e-30f);
+        ell_matrix.setCoefficient(2, 2, -1e30f);
+        ell_matrix.setCoefficient(3, 3, 1e30f);
         ell_matrix.assembleStorage();
 
         std::string expected_output = 
