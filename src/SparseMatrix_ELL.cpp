@@ -71,6 +71,25 @@ namespace SpMV
         }
     }
 
+    //matvec function 
+    template <class fp_type>
+    void SparseMatrix_ELL<fp_type>::matvec(std::vector<fp_type> & b, const std::vector<fp_type> & x){
+
+        //definitions
+        size_t count = 0;
+        //main loop
+        for (size_t i; i < this->nnzs; ++i){
+            //multiply and increment 
+            //this assumes that if val[i] is padded it will return 0 when multiplied 
+            b[count] = this->val[i] * x[this->colIdx[i]];
+            count += 1;
+            //if we have gone through the column completly, reset the counter
+            if (count == this->_nrows){
+                count = 0;
+            }
+        }
+    }
+
     template class SparseMatrix_ELL<float>;
     template class SparseMatrix_ELL<double>;
 } // namespace SpMV

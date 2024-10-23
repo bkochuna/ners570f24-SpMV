@@ -13,6 +13,7 @@
 #pragma once
 
 #include "SparseMatrix.hpp"
+#include <vector>
 
 namespace SpMV
 {
@@ -34,9 +35,9 @@ namespace SpMV
         SparseMatrix_ELL();                                     // Default constructor
         virtual ~SparseMatrix_ELL();                            // Destructor
 
-        void assembleStorage() {assert(false);};                // Assemble storage
-        void MatVec() {assert(false);};                         // Multiplication
-        void view();                            // View
+    void assembleStorage() {assert(false);};                // Assemble storage
+    void matvec(std::vector<fp_type> & b, const std::vector<fp_type> & x);       // Multiplication
+    void view();                            // View
 
     }; // class SparseMatrix_ELL
 } // namespace SpMV
