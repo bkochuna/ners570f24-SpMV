@@ -36,11 +36,11 @@ namespace SpMV
 
     // Destructor
     // Automatically handles resource cleanup via standard destructors
-    template <class fp_type>
-    SparseMatrix_JDS<fp_type>::~SparseMatrix_JDS()
-    {
-        std::cout << "Hello from SparseMatrix_JDS Destructor!\n";
-    }
+    // template <class fp_type>
+    // SparseMatrix_JDS<fp_type>::~SparseMatrix_JDS()
+    // {
+    //     std::cout << "Hello from SparseMatrix_JDS Destructor!\n";
+    // }
 
     // Placeholder for assembleStorage method
     template <class fp_type>
