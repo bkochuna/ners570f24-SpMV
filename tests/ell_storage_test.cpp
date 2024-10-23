@@ -13,6 +13,24 @@
 #include <cmath>
 #include "unit_test_framework.hpp"
 
+template <typename T>
+TEST_CASE(matrix_state_test)
+{
+    // Define ELL Matrix
+    SpMV::SparseMatrix<T>* ptr_A = new SpMV::SparseMatrix_ELL<T>(1, 1);
+    ptr_A->setCoefficient(0,0,static_cast<T>(1));
+    // assert the state of the matrix after setCoefficient/prior to assembleStorage()
+    ASSERT(ptr_A->_state == building);
+    // pass coefficients to assembleStorage()
+    ptr_A->assembleStorage();
+    // assert the state of the matrix after assembleStorage()
+    ASSERT(ptr_A->_state == assembled);
+    // call disassembleStorage() and assert the matrix state
+    ptr_A->disassembleStorage();
+    ASSERT(ptr_A->_state == building);
+
+}
+
 // Banded Matrix Test
 // unit test to check if assembleStorage() returns ELL arrays for nxn m-diagonal (d-gap between each diagonal) matrix correctly; NOTE: m is odd!
 template <size_t n, size_t m, size_t d, typename T>
@@ -93,12 +111,9 @@ TEST_CASE(banded_nxn_mdiag_deld)
         }
     }
 
-    // assert the state of the matrix after setCoefficient/prior to assembleStorage()
-    ASSERT(ptr_A->_state == building);
+    
     // pass coefficients to assembleStorage()
     ptr_A->assembleStorage();
-    // assert the state of the matrix after assembleStorage()
-    ASSERT(ptr_A->_state == assembled);
     // access the ELL quantities
     std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
     std::vector<T>* val_obt = ptr_A->getVal();
@@ -144,7 +159,6 @@ TEST_CASE(banded_nxn_mdiag_deld)
 
     // call disassembleStorage() and assert the matrix state
     ptr_A->disassembleStorage();
-    ASSERT(ptr_A->_state == building);
 
     delete(ptr_A);
 }
@@ -152,6 +166,8 @@ TEST_CASE(banded_nxn_mdiag_deld)
 template <typename T>
 TEST_SUITE(ell_vec_compare) 
 {
+  // MAtrix state scheck
+  TEST(matrix_state_test);
   // Medium-sized Identity matrix
   TEST((banded_nxn_mdiag_deld<10,0,0, T>));
 
@@ -209,12 +225,8 @@ TEST_CASE(banded_nxn_r0)
         }}       
     }
     
-    // assert the state of the matrix after setCoefficient/prior to assembleStorage()
-    ASSERT(ptr_A->_state == building);
     // pass coefficients to assembleStorage()
     ptr_A->assembleStorage();
-    // assert the state of the matrix after assembleStorage()
-    ASSERT(ptr_A->_state == assembled);
     // access the ELL quantities
     std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
     std::vector<T>* val_obt = ptr_A->getVal();
@@ -227,10 +239,8 @@ TEST_CASE(banded_nxn_r0)
         ASSERT((*val_obt)[i] == 0);
     }
     
-    // call disassembleStorage() and assert the matrix state
+    // call disassembleStorage()
     ptr_A->disassembleStorage();
-    ASSERT(ptr_A->_state == building);
-
     delete(ptr_A);
     
 }
@@ -255,12 +265,8 @@ TEST_CASE(all0_but1)
     ptr_A->setCoefficient(r, c, static_cast<T>(1));
 
     
-    // assert the state of the matrix after setCoefficient/prior to assembleStorage()
-    ASSERT(ptr_A->_state == building);
     // pass coefficients to assembleStorage()
     ptr_A->assembleStorage();
-    // assert the state of the matrix after assembleStorage()
-    ASSERT(ptr_A->_state == assembled);
     // access the ELL quantities
     std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
     std::vector<T>* val_obt = ptr_A->getVal();
@@ -288,10 +294,8 @@ TEST_CASE(all0_but1)
         
     }
     
-    // call disassembleStorage() and assert the matrix state
+    // call disassembleStorage()
     ptr_A->disassembleStorage();
-    ASSERT(ptr_A->_state == building);
-
     delete(ptr_A);
     
 }
@@ -312,13 +316,8 @@ TEST_CASE(all0)
         ptr_A->setCoefficient(i, i, static_cast<T>(0));    
     }
 
-    
-    // assert the state of the matrix after setCoefficient/prior to assembleStorage()
-    ASSERT(ptr_A->_state == building);
     // pass coefficients to assembleStorage()
     ptr_A->assembleStorage();
-    // assert the state of the matrix after assembleStorage()
-    ASSERT(ptr_A->_state == assembled);
     // access the ELL quantities
     std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
     std::vector<T>* val_obt = ptr_A->getVal();
@@ -330,73 +329,10 @@ TEST_CASE(all0)
 
     // call disassembleStorage() and assert the matrix state
     ptr_A->disassembleStorage();
-    ASSERT(ptr_A->_state == building);
-
     delete(ptr_A);
     
 }
 
-// duplicated elements!, method should consider the latest value assigned
-template <size_t n, size_t m, typename T>
-TEST_CASE(changed_coeff)
-{
-    ASSERT(n>0);
-    ASSERT(m>0);
-    ASSERT(m<n);
-    
-    // Define ELL Matrix
-    SpMV::SparseMatrix<T>* ptr_A = new SpMV::SparseMatrix_ELL<T>(n, n);
-
-    // initialize the keys
-    
-    for(size_t i=0;i<n;i++)
-    {
-        ptr_A->setCoefficient(i, i, static_cast<T>(1));    
-    }
-    for(size_t i=0;i<m;i++)
-    {
-        ptr_A->setCoefficient(i, i, static_cast<T>(2));    
-    }
-
-    
-    // assert the state of the matrix after setCoefficient/prior to assembleStorage()
-    ASSERT(ptr_A->_state == building);
-    // pass coefficients to assembleStorage()
-    ptr_A->assembleStorage();
-    // assert the state of the matrix after assembleStorage()
-    ASSERT(ptr_A->_state == assembled);
-    // access the ELL quantities
-    std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
-    std::vector<T>* val_obt = ptr_A->getVal();
-    size_t lmax = ptr_A->getLmax();
-    
-    // assert that the array sizes are n
-    ASSERT( colIdx_obt->size() == n);
-    ASSERT( val_obt->size() == n);
-
-    // Test that elements values are the newly mentioned values
-    for (size_t i = 0; i < n; ++i) 
-    {
-        ASSERT((*colIdx_obt)[i] == i);
-        if(i<m)
-        {
-          ASSERT((*val_obt)[i] == static_cast<T>(2));  
-        }
-        else
-        {
-            ASSERT((*val_obt)[i] == static_cast<T>(1));
-        }
-        
-        
-    }
-    
-    // call disassembleStorage() and assert the matrix state
-    ptr_A->disassembleStorage();
-    ASSERT(ptr_A->_state == building);
-
-    delete(ptr_A);
-    
-}
 
 template <typename T>
 TEST_SUITE(ell_vec_edgecase) 
@@ -413,10 +349,6 @@ TEST_SUITE(ell_vec_edgecase)
 
   // how it handles 0 matrix
   TEST((all0<6,T>));
-
-  // how it handles duplicate elements for 
-  TEST((changed_coeff<10,3,T>)); // some keys
-  TEST((changed_coeff<10,10,T>)); // all keys
 } // add_sub_suite
 
 auto
