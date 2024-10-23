@@ -24,11 +24,11 @@
 //
 
 // Create a unit test
-TEST_CASE(jaAccessor) 
+TEST_CASE(ColIdxAccessor) 
 {
 
   // Initialize reference variable for testing
-  std::vector<size_t> const ja_ref = {0, 1, 0};
+  std::vector<size_t> const ColIdx_ref = {0, 1, 0};
 
   // Initialize test matrix
   SpMV::SparseMatrix_CSR<double> test_mat = SpMV::SparseMatrix_CSR<double>(2, 2);
@@ -40,20 +40,20 @@ TEST_CASE(jaAccessor)
   test_mat.setCoefficient(1, 1, 2.0); 
 
   // Access ja
-  std::vector<size_t> ja_test = test_mat.getColIdx();
+  std::vector<size_t> ColIdx_test = test_mat.getColIdx();
 
   // Test that the elements are equal
-  for (size_t i = 0; i < ja_ref.size(); ++i) {
-    ASSERT(ja_ref[i] == ja_test[i]); 
+  for (size_t i = 0; i < ColIdx_ref.size(); ++i) {
+    ASSERT(ColIdx_ref[i] == ColIdx_test[i]); 
   }
   
-} // jaAccessor
+} // ColIdxAccessor
 
 // Create a test suite
 TEST_SUITE(non_templated) 
 {
   // Run the unit test when the suite is run
-  TEST(jaAccessor);
+  TEST(ColIdxAccessor);
 } // my_suite
 
 // We can also create templated tests and suites
