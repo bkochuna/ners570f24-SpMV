@@ -81,7 +81,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     }
     // initialize the required ELL arrays
 
-    size_t* colIdx_req = new int[nnz_rmax*n];
+    size_t* colIdx_req = new size_t[nnz_rmax*n];
     T* val_req = new T[nnz_rmax*n];
 
     size_t id = 0;
