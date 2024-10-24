@@ -45,9 +45,6 @@ TEST_CASE(checkParametrizedConstructor)
 
 }
 
-// test that the parametrized constructor throws errors for negative
-
-
 // test to see if we can access class properties that we expect
 template <typename T>
 TEST_CASE(checkObjectProperties)
