@@ -3,7 +3,6 @@
 #ifndef _LIBSPMV_
 #  error("unit_test_framework.hpp must be included AFTER SpMV.hpp!")
 #endif
-#include <SparseMatrix_ELL.hpp>
 #include <vector>  // For std::vector
 #include <map>
 #include <cstdlib>
