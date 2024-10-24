@@ -87,7 +87,7 @@ namespace SpMV
            		 {
                			 std::cout << this->val[i * this->_ncols + j] << ", "; // Access elements in row-major order
            		 }
-    		         std::cout << this->val[i * this->_ncols + this->_ncols - 1] << "]" << std::endl; // Last element in the row
+    		         std::cout << this->val[i * this->_ncols + this->_ncols - 1] << "]" << std::endl;
        		}
    	 }
     }
