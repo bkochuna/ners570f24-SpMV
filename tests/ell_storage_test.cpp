@@ -275,7 +275,7 @@ TEST_CASE(all0_but1)
     // assert that larget non-zero per row is 1
     assert( lmax==1);
     // assert that the array sizes are n
-    ASSERT( colIdx_obt>size() == n);
+    ASSERT( colIdx_obt->size() == n);
     ASSERT( val_obt->size() == n);
 
     // Test that elements corresponding to all rows except n/2 are padded
