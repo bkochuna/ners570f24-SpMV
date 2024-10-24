@@ -27,7 +27,7 @@ TEST_CASE(matrix_state_test)
     ASSERT(ptr_A->getState() == assembled);
     // call disassembleStorage() and assert the matrix state
     ptr_A->disassembleStorage();
-    ASSERT(ptr_A->_state == building);
+    ASSERT(ptr_A->getState() == building);
 
 }
 
@@ -95,7 +95,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
             if (cid >-1 && cid <static_cast<int>(n))
             {
                 colIdx_req[id] = cid;
-                val_req[id] = static_cast<fp_type>(1+abs(j));
+                val_req[id] = static_cast<T>(1+abs(j));
                 id += 1;
                 nnz_c +=1;
             } 
