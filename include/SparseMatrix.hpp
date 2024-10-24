@@ -4,13 +4,14 @@
 #include <cstddef>
 #include <map>
 #include <utility>
+// SparseMatrix.hpp header file: declares class and methods
 
 namespace SpMV
 {
     // Enumerations for matrix state to support Builder Pattern
     enum MatrixState { undefined, initialized, building, assembled };
 
-    template <class fp_type>
+    template <class fp_type> // SparseMatrix class is templated by fp_type floating-point allowing single(float) and double(double) precision
     class SparseMatrix
     {
     protected: 
@@ -21,10 +22,11 @@ namespace SpMV
         MatrixState _state = undefined;
 
         std::map<std::pair<size_t, size_t>, fp_type> _buildCoeff;
+        // _buildCoeff is a map that stores matrix coefficients. They key is a pair(row,col)
 
     public:
-        SparseMatrix(const int nrows, const int ncols);
-        virtual ~SparseMatrix();
+        SparseMatrix(const int nrows, const int ncols); // constructor (cost)
+        virtual ~SparseMatrix(); // destructor
 
         inline size_t      getNumRows()     const { return _nrows; };
         inline size_t      getNumCols()     const { return _ncols; };
