@@ -47,6 +47,8 @@ TEST_CASE(zero_matrix)
   matrix.setCoefficient(row, col, val);
   matrix.setCoefficient(row, col, val);
 
+  matrix.assembleStorage();
+
   matrix.view();
 
   std::ifstream file("view.out"); 
@@ -83,6 +85,8 @@ TEST_CASE(multi_matrix)
 
   matrix.setCoefficient(row1, col1, val1);
   matrix.setCoefficient(row2, col2, val2);
+
+  matrix.assembleStorage();
 
   matrix.view();
 
