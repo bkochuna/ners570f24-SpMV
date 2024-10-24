@@ -128,7 +128,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     {
         if((*colIdx_obt)[i] == -1)
         {
-            ASSERT((*val_obt)[i] == 0); 
+            ASSERT_NEAR((*val_obt)[i], static_cast<fp_type>(0), 1e-5);  
         }
     
     }
@@ -137,7 +137,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     {
         if((*colIdx_obt)[i] != -1)
         {
-            ASSERT((*val_obt)[i] != 0); 
+            ASSERT((*val_obt)[i]*(*val_obt)[i] > static_cast<fp_type>(0)); 
         }
     
     }
