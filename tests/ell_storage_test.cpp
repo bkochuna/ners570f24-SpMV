@@ -81,8 +81,8 @@ TEST_CASE(banded_nxn_mdiag_deld)
     }
     // initialize the required ELL arrays
 
-    int colIdx_req(nnz_rmax*n);
-    T val_req(nnz_rmax*n);
+    int* colIdx_req = new int[nnz_rmax*n];
+    T* val_req = new T[nnz_rmax*n];
 
     size_t id = 0;
     size_t nnz_c;
@@ -117,44 +117,46 @@ TEST_CASE(banded_nxn_mdiag_deld)
     // access the ELL quantities
     const size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
     const T* val_obt = ptr_A.getVal();
+    const size_t lmax = ptr_A.getLmax();
+    const size_t size_obt = lmax*n;
 
+    // Test that _req and _obt arrays have same size
+    ASSERT(size_obt == nnz_rmax*n);
     // Test that no column ID is below (-1)
-    for (size_t i = 0; i < colIdx_obt->size(); ++i) 
+    for (size_t i = 0; i < size_obt; ++i) 
     {
-        ASSERT((*colIdx_obt)[i] > -2); 
+        ASSERT(colIdx_obt[i] > -2); 
     }
     // Test that no value is given for padded element
-    for (size_t i = 0; i < colIdx_obt->size(); ++i) 
+    for (size_t i = 0; i < size_obt; ++i) 
     {
-        if((*colIdx_obt)[i] == -1)
+        if(colIdx_obt[i] == -1)
         {
-            ASSERT_NEAR((*val_obt)[i], static_cast<T>(0), static_cast<T>(1e-5));  
+            ASSERT_NEAR(val_obt[i], static_cast<T>(0), static_cast<T>(1e-5));  
         }
     
     }
     // Test that no valid column has zero value
-    for (size_t i = 0; i < colIdx_obt->size(); ++i) 
+    for (size_t i = 0; i < size_obt; ++i) 
     {
-        if((*colIdx_obt)[i] != -1)
+        if(colIdx_obt[i] != -1)
         {
-            ASSERT((*val_obt)[i]*(*val_obt)[i] > static_cast<T>(0)); 
+            ASSERT(val_obt[i]*val_obt[i] > static_cast<T>(0)); 
         }
     
     }
-    // Test that _req and _obt arrays have same size
-    ASSERT( colIdx_obt->size() == colIdx_req.size());
-    ASSERT( val_obt->size() == val_req.size());
+    
 
     // Test that both colIdx are same element wise
-    for (size_t i = 0; i < colIdx_obt->size(); ++i) 
+    for (size_t i = 0; i < size_obt; ++i) 
     {
-    ASSERT((*colIdx_obt)[i] == colIdx_req[i]); 
+    ASSERT(colIdx_obt[i] == colIdx_req[i]); 
     }
    
    // Test that both val are same element wise
-    for (size_t i = 0; i < val_obt->size(); ++i) 
+    for (size_t i = 0; i < size_obt; ++i) 
     {
-    ASSERT_NEAR((*val_obt)[i], val_req[i], static_cast<T>(1e-5)); 
+    ASSERT_NEAR(val_obt[i], val_req[i], static_cast<T>(1e-5)); 
     }
 
     // call disassembleStorage() and assert the matrix state
@@ -234,8 +236,8 @@ TEST_CASE(banded_nxn_r0)
     // Test that elements corresponding to r^th row are padded
     for (size_t i = r*lmax; i < (r+1)*lmax; ++i) 
     {
-        ASSERT((*colIdx_obt)[i] == -1);
-        ASSERT_NEAR((*val_obt)[i],static_cast<T>(0),static_cast<T>(1e-10));
+        ASSERT(colIdx_obt[i] == -1);
+        ASSERT_NEAR(val_obt[i],static_cast<T>(0),static_cast<T>(1e-10));
     }
     
     // call disassembleStorage()
@@ -270,25 +272,26 @@ TEST_CASE(all0_but1)
     const size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
     const T* val_obt = ptr_A.getVal();
     size_t lmax = ptr_A.getLmax();
-    
+    const size_t size_obt = lmax*n;
+
     // assert that larget non-zero per row is 1
     assert( lmax==1);
     // assert that the array sizes are n
-    ASSERT( colIdx_obt->size() == n);
-    ASSERT( val_obt->size() == n);
+    ASSERT( size_obt == n); 
+    ASSERT( size_obt == n); 
 
     // Test that elements corresponding to all rows except n/2 are padded
     for (size_t i = 0; i < n; ++i) 
     {
         if (i!= r)
         {
-            ASSERT((*colIdx_obt)[i] == -1);
-            ASSERT_NEAR((*val_obt)[i],static_cast<T>(0),static_cast<T>(1e-10));
+            ASSERT(colIdx_obt[i] == -1);
+            ASSERT_NEAR(val_obt[i],static_cast<T>(0),static_cast<T>(1e-10));
         }
         else
         {
-            ASSERT((*colIdx_obt)[i] == static_cast<int>(c));
-            ASSERT_NEAR((*val_obt)[i],static_cast<T>(1),static_cast<T>(1e-10));
+            ASSERT(colIdx_obt[i] == static_cast<int>(c));
+            ASSERT_NEAR(val_obt[i],static_cast<T>(1),static_cast<T>(1e-10));
         }
         
     }
