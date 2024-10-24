@@ -290,7 +290,7 @@ TEST_CASE(all0_but1)
         }
         else
         {
-            ASSERT(colIdx_obt[i] == static_cast<int>(c));
+            ASSERT(colIdx_obt[i] == static_cast<size_t>(c));
             ASSERT_NEAR(val_obt[i],static_cast<T>(1),static_cast<T>(1e-10));
         }
         
