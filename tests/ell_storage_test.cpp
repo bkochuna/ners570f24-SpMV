@@ -125,12 +125,12 @@ TEST_CASE(banded_nxn_mdiag_deld)
     // Test that no column ID is below (-1)
     for (size_t i = 0; i < size_obt; ++i) 
     {
-        ASSERT(colIdx_obt[i] > -2); 
+        ASSERT(colIdx_obt[i] > static_cast<size_t>(-2)); 
     }
     // Test that no value is given for padded element
     for (size_t i = 0; i < size_obt; ++i) 
     {
-        if(colIdx_obt[i] == -1)
+        if(colIdx_obt[i] == static_cast<size_t>(-1))
         {
             ASSERT_NEAR(val_obt[i], static_cast<T>(0), static_cast<T>(1e-5));  
         }
@@ -139,7 +139,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     // Test that no valid column has zero value
     for (size_t i = 0; i < size_obt; ++i) 
     {
-        if(colIdx_obt[i] != -1)
+        if(colIdx_obt[i] >= static_cast<size_t>(0))
         {
             ASSERT(val_obt[i]*val_obt[i] > static_cast<T>(0)); 
         }
@@ -236,7 +236,7 @@ TEST_CASE(banded_nxn_r0)
     // Test that elements corresponding to r^th row are padded
     for (size_t i = r*lmax; i < (r+1)*lmax; ++i) 
     {
-        ASSERT(colIdx_obt[i] == -1);
+        ASSERT(colIdx_obt[i] == static_cast<size_t>(-1));
         ASSERT_NEAR(val_obt[i],static_cast<T>(0),static_cast<T>(1e-10));
     }
     
@@ -285,7 +285,7 @@ TEST_CASE(all0_but1)
     {
         if (i!= r)
         {
-            ASSERT(colIdx_obt[i] == -1);
+            ASSERT(colIdx_obt[i] == static_cast<size_t>(-1));
             ASSERT_NEAR(val_obt[i],static_cast<T>(0),static_cast<T>(1e-10));
         }
         else
