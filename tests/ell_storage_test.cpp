@@ -81,7 +81,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     }
     // initialize the required ELL arrays
 
-    int* colIdx_req = new int[nnz_rmax*n];
+    size_t* colIdx_req = new size_t[nnz_rmax*n];
     T* val_req = new T[nnz_rmax*n];
 
     size_t id = 0;
@@ -104,7 +104,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
         {
             for (size_t j=0;j<(nnz_rmax-nnz_c);j++)
             {
-                colIdx_req[id] = -1;
+                colIdx_req[id] = n+1; //-1
                 val_req[id] = 0;
                 id += 1;
             }
@@ -122,15 +122,11 @@ TEST_CASE(banded_nxn_mdiag_deld)
 
     // Test that _req and _obt arrays have same size
     ASSERT(size_obt == nnz_rmax*n);
-    // Test that no column ID is below (-1)
-    for (size_t i = 0; i < size_obt; ++i) 
-    {
-        ASSERT(colIdx_obt[i] > static_cast<size_t>(-2)); 
-    }
+    
     // Test that no value is given for padded element
     for (size_t i = 0; i < size_obt; ++i) 
     {
-        if(colIdx_obt[i] == static_cast<size_t>(-1))
+        if(colIdx_obt[i] == n+static_cast<size_t>(1))
         {
             ASSERT_NEAR(val_obt[i], static_cast<T>(0), static_cast<T>(1e-5));  
         }
@@ -139,7 +135,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     // Test that no valid column has zero value
     for (size_t i = 0; i < size_obt; ++i) 
     {
-        if(colIdx_obt[i] >= static_cast<size_t>(0))
+        if(colIdx_obt[i] <= n)
         {
             ASSERT(val_obt[i]*val_obt[i] > static_cast<T>(0)); 
         }
@@ -236,7 +232,7 @@ TEST_CASE(banded_nxn_r0)
     // Test that elements corresponding to r^th row are padded
     for (size_t i = r*lmax; i < (r+1)*lmax; ++i) 
     {
-        ASSERT(colIdx_obt[i] == static_cast<size_t>(-1));
+        ASSERT(colIdx_obt[i] == n+static_cast<size_t>(1));
         ASSERT_NEAR(val_obt[i],static_cast<T>(0),static_cast<T>(1e-10));
     }
     
@@ -285,7 +281,7 @@ TEST_CASE(all0_but1)
     {
         if (i!= r)
         {
-            ASSERT(colIdx_obt[i] == static_cast<size_t>(-1));
+            ASSERT(colIdx_obt[i] == n+static_cast<size_t>(1));
             ASSERT_NEAR(val_obt[i],static_cast<T>(0),static_cast<T>(1e-10));
         }
         else
