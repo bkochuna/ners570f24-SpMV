@@ -20,14 +20,14 @@ TEST_CASE(matrix_state_test)
     SpMV::SparseMatrix<T>* ptr_A = new SpMV::SparseMatrix_ELL<T>(1, 1);
     ptr_A->setCoefficient(0,0,static_cast<T>(1));
     // assert the state of the matrix after setCoefficient/prior to assembleStorage()
-    ASSERT(ptr_A->getState() == building);
+    ASSERT(ptr_A->getState() == MatrixState::building);
     // pass coefficients to assembleStorage()
     ptr_A->assembleStorage();
     // assert the state of the matrix after assembleStorage()
-    ASSERT(ptr_A->getState() == assembled);
+    ASSERT(ptr_A->getState() == MatrixState::assembled);
     // call disassembleStorage() and assert the matrix state
     ptr_A->disassembleStorage();
-    ASSERT(ptr_A->getState() == building);
+    ASSERT(ptr_A->getState() == MatrixState::building);
 
 }
 
