@@ -92,6 +92,7 @@ spmv_add_cxx_compiler_flag("-pedantic")
 set(SPMV_SOURCES
   "src/SparseMatrix.cpp"
   "src/SparseMatrix_COO.cpp"
+  "src/SparseMatrix_CSR.cpp"
 )
 
 add_library(spmv SHARED ${SPMV_SOURCES})

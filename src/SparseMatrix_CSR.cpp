@@ -222,6 +222,47 @@ namespace SpMV
         outFile.close();
     }
 
+    template <class fp_type>
+    fp_type SparseMatrix_CSR<fp_type>::getCSRvalue(const size_t row, const size_t col) const {
+        
+        // Initialize the CSR Value to 0
+        fp_type CSRValue = 0;
+
+        // Check that CSR matrix is assembled, then grab value from CSR format
+        if (this->_state==assembled) {
+            // Flag for determining if the value was or was not found
+            size_t FoundVal = 0;
+
+            // Check to see if the column and row and within the matrix dimensions
+            if (col > this->_ncols || row > this->_nrows) {
+                // If they are not within the matrix dimensions, return an error
+                throw std::invalid_argument("The given indices are out of the matrix dimensions!");
+            }
+
+            // Use the row to grab all the possible column indices in the specific row
+            for (size_t i = rowIdx[row]; i < rowIdx[row+1]; i++) {
+                // When looping over the column indices, see if any match col
+                if (colIdx[i]==col) {
+                    //If the colIdx matches col, update CSRValue, FoundVal flag, then break out.
+                    FoundVal++;
+                    CSRValue = values[i];
+                    break;
+                }
+            }
+            // Check to see if a value was found if the specified row
+            if (FoundVal == 0) {
+                // If no value was found, then print a message that no value is assigned at the given indices, returning 0
+                std::cout << "There is no value assigned at (" << row << "," << col << "), returning 0" << std::endl;
+            }
+
+        } else {
+            // Return an error if the matrix state is not assembled
+            throw std::runtime_error("Incorrect matrix state: Make sure state is 'assembled' before running getCSRValue!");
+        } 
+        // Return the CSRValue at the very end
+        return CSRValue;
+    }
+
     // Explicit instantiation for float and double types
     template class SparseMatrix_CSR<float>;
     template class SparseMatrix_CSR<double>;
