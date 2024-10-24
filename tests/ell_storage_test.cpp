@@ -3,6 +3,7 @@
 #ifndef _LIBSPMV_
 #  error("unit_test_framework.hpp must be included AFTER SpMV.hpp!")
 #endif
+#include <SparseMatrix.hpp>
 #include <SparseMatrix_ELL.hpp>
 #include <vector>  // For std::vector
 #include <map>
@@ -128,7 +129,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     {
         if((*colIdx_obt)[i] == -1)
         {
-            ASSERT_NEAR((*val_obt)[i], static_cast<fp_type>(0), 1e-5);  
+            ASSERT_NEAR((*val_obt)[i], static_cast<T>(0), 1e-5);  
         }
     
     }
@@ -137,7 +138,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     {
         if((*colIdx_obt)[i] != -1)
         {
-            ASSERT((*val_obt)[i]*(*val_obt)[i] > static_cast<fp_type>(0)); 
+            ASSERT((*val_obt)[i]*(*val_obt)[i] > static_cast<T>(0)); 
         }
     
     }
@@ -167,7 +168,7 @@ template <typename T>
 TEST_SUITE(ell_vec_compare) 
 {
   // MAtrix state scheck
-  TEST(matrix_state_test);
+  TEST(matrix_state_test<T>);
   // Medium-sized Identity matrix
   TEST((banded_nxn_mdiag_deld<10,0,0, T>));
 
@@ -211,7 +212,6 @@ TEST_CASE(banded_nxn_r0)
     size_t cidd = 0;
     for(size_t i=0;i<n;i++)
     {
-        nnz_r = 0;
         if(i!=r){
         for(int j=-1*static_cast<int>(f);j<static_cast<int>(f)+1;j++)
         {
@@ -284,12 +284,12 @@ TEST_CASE(all0_but1)
         if (i!= r)
         {
             ASSERT((*colIdx_obt)[i] == -1);
-            ASSERT_NEAR((*val_obt)[i],static_cast<fp_type>(0),1e-10);
+            ASSERT_NEAR((*val_obt)[i],static_cast<T>(0),1e-10);
         }
         else
         {
             ASSERT((*colIdx_obt)[i] == static_cast<int>(c));
-            ASSERT_NEAR((*val_obt)[i],static_cast<fp_type>(1),1e-10);
+            ASSERT_NEAR((*val_obt)[i],static_cast<T>(1),1e-10);
         }
         
     }
