@@ -70,6 +70,27 @@ namespace SpMV
         }
     }
 
+    template <class fp_type>
+    void SparseMatrix_DEN<fp_type>::view()
+    {
+   	 assert(this->_state == assembled); // Ensure the matrix is in an assembled state
+   	 if (this->_nrows == 0 || this->_ncols == 0)
+   	 {
+		 std::cout << "Matrix is empty." << std::endl;
+    	 }
+    	 else
+    	{
+        	for (size_t i = 0; i < this->_nrows; ++i)
+        	{
+           		 std::cout << "Row " << i << ": [";
+            	         for (size_t j = 0; j < this->_ncols - 1; ++j)
+           		 {
+               			 std::cout << this->val[i * this->_ncols + j] << ", "; // Access elements in row-major order
+           		 }
+    		         std::cout << this->val[i * this->_ncols + this->_ncols - 1] << "]" << std::endl; // Last element in the row
+       		}
+   	 }
+    }
     template class SparseMatrix_DEN<float>;
     template class SparseMatrix_DEN<double>;
 } // namespace SpMV
