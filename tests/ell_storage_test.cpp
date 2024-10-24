@@ -115,8 +115,8 @@ TEST_CASE(banded_nxn_mdiag_deld)
     // pass coefficients to assembleStorage()
     ptr_A.assembleStorage();
     // access the ELL quantities
-    size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
-    T* val_obt = ptr_A.getVal();
+    const size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
+    const T* val_obt = ptr_A.getVal();
 
     // Test that no column ID is below (-1)
     for (size_t i = 0; i < colIdx_obt->size(); ++i) 
@@ -227,8 +227,8 @@ TEST_CASE(banded_nxn_r0)
     // pass coefficients to assembleStorage()
     ptr_A.assembleStorage();
     // access the ELL quantities
-    size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
-    T* val_obt = ptr_A.getVal();
+    const size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
+    const T* val_obt = ptr_A.getVal();
     size_t lmax = ptr_A.getLmax();
     
     // Test that elements corresponding to r^th row are padded
@@ -267,8 +267,8 @@ TEST_CASE(all0_but1)
     // pass coefficients to assembleStorage()
     ptr_A.assembleStorage();
     // access the ELL quantities
-    size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
-    T* val_obt = ptr_A.getVal();
+    const size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
+    const T* val_obt = ptr_A.getVal();
     size_t lmax = ptr_A.getLmax();
     
     // assert that larget non-zero per row is 1
@@ -318,13 +318,13 @@ TEST_CASE(all0)
     // pass coefficients to assembleStorage()
     ptr_A.assembleStorage();
     // access the ELL quantities
-    size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
-    T* val_obt = ptr_A.getVal();
+    const size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
+    const T* val_obt = ptr_A.getVal();
     //size_t lmax = ptr_A.getLmax();
     
     // assert that the pointers are null pointers
-    ASSERT( colIdx_obt->empty());
-    ASSERT( val_obt->empty());
+    ASSERT( colIdx_obt ==nullptr);
+    ASSERT( val_obt==nullptr);
 
     // call disassembleStorage() and assert the matrix state
     ptr_A.disassembleStorage();
