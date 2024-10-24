@@ -160,11 +160,17 @@ namespace SpMV
         rowIdx.clear();
     }
 
-
-
-    // Correct implementation of viewCSR
+    // Implementation of viewCSR
     template <class fp_type>
     void SparseMatrix_CSR<fp_type>::viewCSR() {
+        // Ensure the matrix is in a state that can be viewed
+        if (this->_state != undefined)
+        {
+            std::cerr << "Error: Matrix not in defined state.\n";
+            assert(false);
+            return;
+        }
+
         // Assume the COO format is already stored in rowIdx, colIdx, values
         const size_t nnz = values.size();
         const size_t nrows = this->_nrows;
@@ -196,7 +202,7 @@ namespace SpMV
             next[row]++;
         }
 
-        // Now print the full matrix
+        // Now build the full matrix
         std::vector<std::vector<fp_type>> A(nrows, std::vector<fp_type>(ncols, 0));
         for (size_t row = 0; row < nrows; ++row) {
             for (size_t i = rowPtr[row]; i < rowPtr[row + 1]; ++i) {
@@ -204,15 +210,9 @@ namespace SpMV
             }
         }
 
-        // Print the matrix to console
-        for (const auto& row : A) {
-            for (const auto& val : row) {
-                std::cout << val << " ";
-            }
-            std::cout << "\n";
-        }
-
         // Write the full matrix to a file
+        // Designer decision: must be written to a file to not clog up std out. 
+        // writing the full matrix to a file without identical spacing. one could use iomanip to do this.
         std::ofstream outFile("viewCSR.txt");
         for (const auto& row : A) {
             for (const auto& val : row) 
