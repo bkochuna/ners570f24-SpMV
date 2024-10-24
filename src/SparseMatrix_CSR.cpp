@@ -8,6 +8,13 @@
 
 namespace SpMV 
 {
+    // Default constructor
+    template <class fp_type>
+    SparseMatrix_CSR<fp_type>::SparseMatrix_CSR() : 
+        SparseMatrix<fp_type>() {
+    }
+
+    // Parameterized constructor
     template <class fp_type>
     SparseMatrix_CSR<fp_type>::SparseMatrix_CSR(const size_t nrows, const size_t ncols) :
         SparseMatrix<fp_type>(nrows, ncols) {
@@ -15,6 +22,56 @@ namespace SpMV
         colIdx.reserve(nrows);
         values.reserve(nrows);
     }
+
+    // Copy constructor
+    template <class fp_type>
+    SparseMatrix_CSR<fp_type>::SparseMatrix_CSR(const SparseMatrix_CSR& other) :
+        SparseMatrix<fp_type>(other),
+        rowIdx(other.rowIdx),
+        colIdx(other.colIdx),
+        values(other.values) {
+    }
+
+    // Move constructor
+    template <class fp_type>
+    SparseMatrix_CSR<fp_type>::SparseMatrix_CSR(SparseMatrix_CSR&& other) noexcept :
+        SparseMatrix<fp_type>(std::move(other)),
+        rowIdx(std::move(other.rowIdx)),
+        colIdx(std::move(other.colIdx)),
+        values(std::move(other.values)) {
+    }
+
+    // Copy assignment operator
+    template <class fp_type>
+    SparseMatrix_CSR<fp_type>& SparseMatrix_CSR<fp_type>::operator=(const SparseMatrix_CSR& other) {
+        if (this != &other) {
+            SparseMatrix<fp_type>::operator=(other);
+            rowIdx = other.rowIdx;
+            colIdx = other.colIdx;
+            values = other.values;
+        }
+        return *this;
+    }
+
+    // Move assignment operator
+    template <class fp_type>
+    SparseMatrix_CSR<fp_type>& SparseMatrix_CSR<fp_type>::operator=(SparseMatrix_CSR&& other) noexcept {
+        if (this != &other) {
+            SparseMatrix<fp_type>::operator=(std::move(other));
+            rowIdx = std::move(other.rowIdx);
+            colIdx = std::move(other.colIdx);
+            values = std::move(other.values);
+        }
+        return *this;
+    }
+
+    template <class fp_type>
+    SparseMatrix_CSR<fp_type>::~SparseMatrix_CSR() {
+        rowIdx.clear();
+        colIdx.clear();
+        values.clear();
+    }
+
     // asssemble storage for CSR
     template <typename fp_type>
     void SparseMatrix_CSR<fp_type>::assembleStorage()
