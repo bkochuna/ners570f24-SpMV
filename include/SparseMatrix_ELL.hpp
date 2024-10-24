@@ -25,7 +25,6 @@ namespace SpMV
         // needs but the basic class doesn't include.
         //
         size_t   _lmax   = 0;                                  // Max row length
-        size_t    nnzs    = 0;
         size_t*  _colIdx = nullptr;                            // ELL column indice
         fp_type* _val    = nullptr;                            // ELL values
 
@@ -44,11 +43,6 @@ namespace SpMV
         // Accessor for lmax
         size_t getLmax() const {
             return _lmax;
-        }
-
-        // Accessor for nnzs
-        size_t getNnzs() const {
-            return nnzs;
         }
 
         // Accessor for colIdx

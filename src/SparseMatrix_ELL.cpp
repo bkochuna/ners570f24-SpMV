@@ -78,7 +78,7 @@ namespace SpMV
         //definitions
         size_t count = 0;
         //main loop
-        for (size_t i; i < this->nnzs; ++i){
+        for (size_t i; i < this->_nnz; ++i){
             //multiply and increment 
             //this assumes that if val[i] is padded it will return 0 when multiplied 
             b[count] = this->_val[i] * x[this->_colIdx[i]];
