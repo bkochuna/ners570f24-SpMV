@@ -7,10 +7,10 @@
 // - Oct 17, 2024:  Created by Xianyu Liu, implemented (default) constructor & destructor.
 //
 //
-
 #include "SparseMatrix_ELL.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 namespace SpMV
 {   
@@ -39,9 +39,68 @@ namespace SpMV
     template <class fp_type>
     SparseMatrix_ELL<fp_type>::~SparseMatrix_ELL()
     {
-        delete[]    _colIdx;
-        delete[]    _val;
+        //delete[]    _colIdx;
+        //delete[]    _val;
         std::cout << "Byebye from SparseMatrix_ELL Destructor~\n";
+    }
+
+    template <class fp_type>
+    void SparseMatrix_ELL<fp_type>::assembleStorage()
+    {
+        //Requirements/assumptions of the routine
+        assert(this->_nnz > 0);
+        assert(this->_state == MatrixState::building);
+
+        //Find the maximum number of nonzeros in a row
+        std::vector<size_t> nnz_row(this->_nrows,0);
+        for (const auto& aij : this->_buildCoeff) {
+            std::pair<size_t , size_t> ij = aij.first;
+            size_t i = ij.first;
+            nnz_row[i] += 1;
+        }
+        this->_lmax = std::distance(nnz_row.begin(),
+                                    std::max_element(nnz_row.begin(),nnz_row.end())
+                                   );
+        nnz_row.clear();
+
+        //Allocate storage for ELLPACK format
+        this->_colIdx = std::make_unique< int []    >(this->_nrows*this->_lmax);
+        this->   _val = std::make_unique< fp_type[] >(this->_nrows*this->_lmax);
+
+        //Assign values to ELLPACK format variables
+        std::vector<size_t> nnz_row_offset(this->_nrows,0);
+        for (const auto& aij : this->_buildCoeff) {
+            std::pair<size_t , size_t> ij = aij.first;
+            size_t i = ij.first; 
+            size_t j = ij.second;
+            fp_type val = aij.second;
+
+            this->_colIdx[this->_lmax*i + nnz_row_offset[i]] = static_cast<int>(j);
+            this->   _val[this->_lmax*i + nnz_row_offset[i]] = val;
+
+            nnz_row_offset[i] += 1;
+        }
+
+        //Define values for padded locations in colIdx and val
+        for(size_t i=0; i<this->_nrows; i++)
+        {
+            if(nnz_row_offset[i] < this->_lmax)
+            {
+                for(size_t j=nnz_row_offset[i]; j < this->_lmax; j++)
+                {
+                    this->_colIdx[this->_lmax*i + j] = -1;
+                    this->_val   [this->_lmax*i + j] = 0.0;
+                }
+            }
+        }
+
+        nnz_row_offset.clear();
+
+        this->_buildCoeff.clear();
+        this->_state = MatrixState::assembled;
+
+        //Method ensures
+        assert(this->_state == MatrixState::assembled);
     }
 
     template <class fp_type>

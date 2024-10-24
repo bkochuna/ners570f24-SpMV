@@ -14,6 +14,7 @@
 
 #include "SparseMatrix.hpp"
 #include <vector>
+#include <memory>
 
 namespace SpMV
 {
@@ -24,9 +25,9 @@ namespace SpMV
         // Here gives the basic variables that ELL 
         // needs but the basic class doesn't include.
         //
-        size_t   _lmax   = 0;                                  // Max row length
-        size_t*  _colIdx = nullptr;                            // ELL column indice
-        fp_type* _val    = nullptr;                            // ELL values
+        size_t   _lmax   = 0;                                   // Max row length
+        std::unique_ptr< int [] > _colIdx;                   // ELL column indice
+        std::unique_ptr< fp_type[] > _val;                      // ELL values
 
     public:
         // (Default) Constructor & Destructor
@@ -34,7 +35,7 @@ namespace SpMV
         SparseMatrix_ELL();                                     // Default constructor
         virtual ~SparseMatrix_ELL();                            // Destructor
 
-    void assembleStorage() {assert(false);};                // Assemble storage
+    void assembleStorage();                                     // Assemble storage
     void matvec(std::vector<fp_type> & b, const std::vector<fp_type> & x);       // Multiplication
     void view();                            // View
 
@@ -46,13 +47,13 @@ namespace SpMV
         }
 
         // Accessor for colIdx
-        const size_t* getColIdx() const {
-            return _colIdx; // Return pointer to colIdx
+        const int* getColIdx() const {
+            return _colIdx.get(); // Return pointer to colIdx
         }
 
         // Accessor for val
         const fp_type* getVal() const {
-            return _val; // Return pointer to val
+            return _val.get(); // Return pointer to val
         }
 
     }; // class SparseMatrix_ELL
