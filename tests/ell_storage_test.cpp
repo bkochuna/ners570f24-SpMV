@@ -1,8 +1,8 @@
 #include <SpMV.hpp>
-#pragma once
 #ifndef _LIBSPMV_
 #  error("unit_test_framework.hpp must be included AFTER SpMV.hpp!")
 #endif
+#include <SparseMatrix.hpp>
 #include <vector>  // For std::vector
 #include <map>
 #include <cstdlib>
@@ -16,17 +16,18 @@ template <typename T>
 TEST_CASE(matrix_state_test)
 {
     // Define ELL Matrix
-    SpMV::SparseMatrix<T>* ptr_A = new SpMV::SparseMatrix_ELL<T>(1, 1);
-    ptr_A->setCoefficient(0,0,static_cast<T>(1));
+    SpMV::SparseMatrix_ELL<T> ptr_A(1, 1);
+    ptr_A.setCoefficient(0,0,static_cast<T>(1));
     // assert the state of the matrix after setCoefficient/prior to assembleStorage()
-    ASSERT(ptr_A->_state == building);
+    ASSERT(ptr_A.getState() == SpMV::building);
     // pass coefficients to assembleStorage()
-    ptr_A->assembleStorage();
+    ptr_A.assembleStorage();
     // assert the state of the matrix after assembleStorage()
-    ASSERT(ptr_A->_state == assembled);
+    ASSERT(ptr_A.getState() == SpMV::assembled);
     // call disassembleStorage() and assert the matrix state
-    ptr_A->disassembleStorage();
-    ASSERT(ptr_A->_state == building);
+    ptr_A.disassembleStorage();
+    ASSERT(ptr_A.getState() == SpMV::building);
+    
 
 }
 
@@ -43,7 +44,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     
     // total number of non-zero elements
     size_t nnz = n;
-    for (int i=0;i<f;i++)
+    for (size_t i=0;i<f;i++)
     {
         nnz += 2*(n - d*(i+1));
     }
@@ -54,7 +55,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     size_t nnz_r = 0;
     
     // Define ELL Matrix
-    SpMV::SparseMatrix<T>* ptr_A = new SpMV::SparseMatrix_ELL<T>(n, n);
+    SpMV::SparseMatrix_ELL<T> ptr_A(n, n);
     
     // set the coefficients + find the max. non-zero elements in rows
     int cid = 0;
@@ -62,13 +63,13 @@ TEST_CASE(banded_nxn_mdiag_deld)
     for(size_t i=0;i<n;i++)
     {
         nnz_r = 0;
-        for(size_t j=-1*f;j<f+1;j++)
+        for(int j=-1*static_cast<int>(f);j<static_cast<int>(f)+1;j++)
         {
-            cid = i + j*d;
-            if (cid >-1 && cid <n)
+            cid = static_cast<int>(i) + j*static_cast<int>(d);
+            if (cid >-1 && cid <static_cast<int>(n))
             {
                 cidd = static_cast<size_t>(cid);
-                ptr_A->setCoefficient(i, cidd, static_cast<T>(1+abs(j)));
+                ptr_A.setCoefficient(i, cidd, static_cast<T>(1+abs(j)));
                 nnz_r +=1;
             } 
         }
@@ -88,13 +89,13 @@ TEST_CASE(banded_nxn_mdiag_deld)
     for(size_t i=0;i<n;i++)
     {
         nnz_c = 0;
-        for(size_t j=-1*f;j<f+1;j++)
+        for(int j=-1*static_cast<int>(f);j<static_cast<int>(f)+1;j++)
         {
-            cid = i + j*d;
-            if (cid >-1 && cid <n)
+            cid = static_cast<int>(i) + j*static_cast<int>(d);
+            if (cid >-1 && cid <static_cast<int>(n))
             {
                 colIdx_req[id] = cid;
-                val_req[id] = 1+abs(j);
+                val_req[id] = static_cast<T>(1+abs(j));
                 id += 1;
                 nnz_c +=1;
             } 
@@ -112,10 +113,10 @@ TEST_CASE(banded_nxn_mdiag_deld)
 
     
     // pass coefficients to assembleStorage()
-    ptr_A->assembleStorage();
+    ptr_A.assembleStorage();
     // access the ELL quantities
-    std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
-    std::vector<T>* val_obt = ptr_A->getVal();
+    std::vector<int>* colIdx_obt = ptr_A.getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
+    std::vector<T>* val_obt = ptr_A.getVal();
 
     // Test that no column ID is below (-1)
     for (size_t i = 0; i < colIdx_obt->size(); ++i) 
@@ -127,7 +128,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     {
         if((*colIdx_obt)[i] == -1)
         {
-            ASSERT((*val_obt_obt)[i] == 0); 
+            ASSERT_NEAR((*val_obt)[i], static_cast<T>(0), static_cast<T>(1e-5));  
         }
     
     }
@@ -136,7 +137,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     {
         if((*colIdx_obt)[i] != -1)
         {
-            ASSERT((*val_obt_obt)[i] != 0); 
+            ASSERT((*val_obt)[i]*(*val_obt)[i] > static_cast<T>(0)); 
         }
     
     }
@@ -151,22 +152,22 @@ TEST_CASE(banded_nxn_mdiag_deld)
     }
    
    // Test that both val are same element wise
-    for (size_t i = 0; i < val_obt.size(); ++i) 
+    for (size_t i = 0; i < val_obt->size(); ++i) 
     {
-    ASSERT_NEAR((*val_obt)[i], val_req[i], 1e-5); 
+    ASSERT_NEAR((*val_obt)[i], val_req[i], static_cast<T>(1e-5)); 
     }
 
     // call disassembleStorage() and assert the matrix state
-    ptr_A->disassembleStorage();
+    ptr_A.disassembleStorage();
 
-    delete(ptr_A);
+    
 }
 
 template <typename T>
 TEST_SUITE(ell_vec_compare) 
 {
   // MAtrix state scheck
-  TEST(matrix_state_test);
+  TEST(matrix_state_test<T>);
   // Medium-sized Identity matrix
   TEST((banded_nxn_mdiag_deld<10,0,0, T>));
 
@@ -203,44 +204,43 @@ TEST_CASE(banded_nxn_r0)
     assert(f*d < n ); // valid values of total number of diagonals
     
     // Define ELL Matrix
-    SpMV::SparseMatrix<T>* ptr_A = new SpMV::SparseMatrix_ELL<T>(n, n);
+    SpMV::SparseMatrix_ELL<T> ptr_A(n, n);
 
     // initialize the keys + find the max. non-zero elements in rows
     int cid = 0;
     size_t cidd = 0;
     for(size_t i=0;i<n;i++)
     {
-        nnz_r = 0;
         if(i!=r){
-        for(size_t j=-1*f;j<f+1;j++)
+        for(int j=-1*static_cast<int>(f);j<static_cast<int>(f)+1;j++)
         {
-            cid = i + j*d;
-            if (cid >-1 && cid <n)
+            cid = static_cast<int>(i) + j*static_cast<int>(d);
+            if (cid >-1 && cid <static_cast<int>(n))
             {
                 cidd = static_cast<size_t>(cid);
-                ptr_A->setCoefficient(i, cidd, static_cast<T>(1+abs(j)));
+                ptr_A.setCoefficient(i, cidd, static_cast<T>(1+abs(j)));
                 
             } 
         }}       
     }
     
     // pass coefficients to assembleStorage()
-    ptr_A->assembleStorage();
+    ptr_A.assembleStorage();
     // access the ELL quantities
-    std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
-    std::vector<T>* val_obt = ptr_A->getVal();
-    size_t lmax = ptr_A->getLmax();
+    std::vector<int>* colIdx_obt = ptr_A.getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
+    std::vector<T>* val_obt = ptr_A.getVal();
+    size_t lmax = ptr_A.getLmax();
     
     // Test that elements corresponding to r^th row are padded
     for (size_t i = r*lmax; i < (r+1)*lmax; ++i) 
     {
         ASSERT((*colIdx_obt)[i] == -1);
-        ASSERT((*val_obt)[i] == 0);
+        ASSERT_NEAR((*val_obt)[i],static_cast<T>(0),static_cast<T>(1e-10));
     }
     
     // call disassembleStorage()
-    ptr_A->disassembleStorage();
-    delete(ptr_A);
+    ptr_A.disassembleStorage();
+    
     
 }
 
@@ -251,25 +251,25 @@ TEST_CASE(all0_but1)
     ASSERT(n>2);
     
     // Define ELL Matrix
-    SpMV::SparseMatrix<T>* ptr_A = new SpMV::SparseMatrix_ELL<T>(n, n);
+    SpMV::SparseMatrix_ELL<T> ptr_A(n, n);
 
     // initialize the keys
     
     for(size_t i=0;i<n;i++)
     {
-        ptr_A->setCoefficient(i, i, static_cast<T>(0));    
+        ptr_A.setCoefficient(i, i, static_cast<T>(0));    
     }
     size_t r = n/2;
     size_t c = (n/2)-1;
-    ptr_A->setCoefficient(r, c, static_cast<T>(1));
+    ptr_A.setCoefficient(r, c, static_cast<T>(1));
 
     
     // pass coefficients to assembleStorage()
-    ptr_A->assembleStorage();
+    ptr_A.assembleStorage();
     // access the ELL quantities
-    std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
-    std::vector<T>* val_obt = ptr_A->getVal();
-    size_t lmax = ptr_A->getLmax();
+    std::vector<int>* colIdx_obt = ptr_A.getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
+    std::vector<T>* val_obt = ptr_A.getVal();
+    size_t lmax = ptr_A.getLmax();
     
     // assert that larget non-zero per row is 1
     assert( lmax==1);
@@ -283,19 +283,19 @@ TEST_CASE(all0_but1)
         if (i!= r)
         {
             ASSERT((*colIdx_obt)[i] == -1);
-            ASSERT((*val_obt)[i] == 0);
+            ASSERT_NEAR((*val_obt)[i],static_cast<T>(0),static_cast<T>(1e-10));
         }
         else
         {
-            ASSERT((*colIdx_obt)[i] == c);
-            ASSERT((*val_obt)[i] == 1);
+            ASSERT((*colIdx_obt)[i] == static_cast<int>(c));
+            ASSERT_NEAR((*val_obt)[i],static_cast<T>(1),static_cast<T>(1e-10));
         }
         
     }
     
     // call disassembleStorage()
-    ptr_A->disassembleStorage();
-    delete(ptr_A);
+    ptr_A.disassembleStorage();
+    
     
 }
 
@@ -306,29 +306,29 @@ TEST_CASE(all0)
     ASSERT(n>0);
     
     // Define ELL Matrix
-    SpMV::SparseMatrix<T>* ptr_A = new SpMV::SparseMatrix_ELL<T>(n, n);
+    SpMV::SparseMatrix_ELL<T> ptr_A(n, n);
 
     // initialize the keys
     
     for(size_t i=0;i<n;i++)
     {
-        ptr_A->setCoefficient(i, i, static_cast<T>(0));    
+        ptr_A.setCoefficient(i, i, static_cast<T>(0));    
     }
 
     // pass coefficients to assembleStorage()
-    ptr_A->assembleStorage();
+    ptr_A.assembleStorage();
     // access the ELL quantities
-    std::vector<int>* colIdx_obt = ptr_A->getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
-    std::vector<T>* val_obt = ptr_A->getVal();
-    size_t lmax = ptr_A->getLmax();
+    std::vector<int>* colIdx_obt = ptr_A.getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
+    std::vector<T>* val_obt = ptr_A.getVal();
+    //size_t lmax = ptr_A.getLmax();
     
     // assert that the pointers are null pointers
     ASSERT( colIdx_obt->empty());
-    ASSERT( colIdx_obt->empty());
+    ASSERT( val_obt->empty());
 
     // call disassembleStorage() and assert the matrix state
-    ptr_A->disassembleStorage();
-    delete(ptr_A);
+    ptr_A.disassembleStorage();
+    
     
 }
 
@@ -350,8 +350,8 @@ TEST_SUITE(ell_vec_edgecase)
   TEST((all0<6,T>));
 } // add_sub_suite
 
-auto
-main() -> int
+
+int main()
 {
   // Run the unit tests. If a test fails, the program will print failure info
   // and return 1.
