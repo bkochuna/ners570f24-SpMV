@@ -4,7 +4,7 @@
 
 namespace SpMV
 {
-    template <class fp_type> // Parameterized constructor
+    template <class fp_type>
     SparseMatrix_DEN<fp_type>::SparseMatrix_DEN(const int nrows, const int ncols) :
          SparseMatrix<fp_type>::SparseMatrix(nrows, ncols)
     {
@@ -12,19 +12,19 @@ namespace SpMV
         this->_nrows = nrows;
         this->_ncols = ncols;
         assembleStorage();
-
     }
 
-    template <class fp_type> // Default constructor
+    template <class fp_type>
     SparseMatrix_DEN<fp_type>::SparseMatrix_DEN() :
          SparseMatrix<fp_type>::SparseMatrix(1, 1)
     {
         std::cout << "Hello from SparseMatrix_DEN Default Constructor!\n";
+        this->setCoefficient(0, 0, 0.0);
         assembleStorage();
 
     }
 
-    template <class fp_type> //Destructor
+    template <class fp_type>
     SparseMatrix_DEN<fp_type>::~SparseMatrix_DEN()
     {
         std::cout << "Hello from SparseMatrix_DEN Destuctor!\n";
@@ -58,38 +58,39 @@ namespace SpMV
     template <class fp_type>
     void SparseMatrix_DEN<fp_type>::matvec(std::vector<fp_type>& b, const std::vector<fp_type>& x){
         // Check for size
-        assert(_ncols == x.size());
-        if (b.size() != _nrows) b.resize(_nrows);
+        assert(this->_ncols == x.size());
+        if (b.size() != this->_nrows) b.resize(this->_nrows);
         
-        for (int i = 0; i < _nrows; i++){
+        for (size_t i = 0; i < this->_nrows; i++){
             b[i] = 0.0;
-            for (int j = 0; j < n; j++){
-                b[i] += _A_mat.[i][j] * x[j];
+            for (size_t j = 0; j < this->_ncols; j++){
+                b[i] += this->_A_mat[i][j] * x[j];
             }
         }
+	
+    
+	    std::cout << x.size() << std::endl;
     }
 
     template <class fp_type>
-    void SparseMatrix_DEN<fp_type>::view()
+    void SparseMatrix_DEN<fp_type>::assembleStorage()
     {
-   	 assert(this->_state == assembled); // Ensure the matrix is in an assembled state
-   	 if (this->_nrows == 0 || this->_ncols == 0)
-   	 {
-		 std::cout << "Matrix is empty." << std::endl;
-    	 }
-    	 else
-    	{
-        	for (size_t i = 0; i < this->_nrows; ++i)
-        	{
-           		 std::cout << "Row " << i << ": [";
-            	         for (size_t j = 0; j < this->_ncols - 1; ++j)
-           		 {
-               			 std::cout << this->val[i * this->_ncols + j] << ", "; // Access elements in row-major order
-           		 }
-    		         std::cout << this->val[i * this->_ncols + this->_ncols - 1] << "]" << std::endl;
-       		}
-   	 }
+	    // typename std::map<std::pair<size_t, size_t>, fp_type>::iterator it;
+	    for (auto it = this->_buildCoeff.begin(); it != this->_buildCoeff.end(); it++)
+	    {
+		    size_t i = std::get<0>(it->first);
+		    size_t j = std::get<1>(it->first);
+		    fp_type A_val = it->second;
+		    _A_mat[i][j] = A_val;
+	    }
+	    assert(this->_nrows>0);
+	    assert(this->_ncols>0);
+	    this->_state = assembled;
     }
+    template <class fp_type>
+    void SparseMatrix_DEN<fp_type>::disassembleStorage() {}
+
+
     template class SparseMatrix_DEN<float>;
     template class SparseMatrix_DEN<double>;
 } // namespace SpMV
