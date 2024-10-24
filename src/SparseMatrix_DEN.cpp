@@ -59,17 +59,13 @@ namespace SpMV
     template <class fp_type>
     void SparseMatrix_DEN<fp_type>::matvec(std::vector<fp_type>& b, const std::vector<fp_type>& x){
         // Check for size
-        const std::size_t n = A.getNumCols();
-        if (n != x.size()){
-            throw std::invalid_argument("ERROR: Size mismatch in matrix and vector.");
-        }
-        const std::size_t m = A.getNumRows();
-        if (b.size() != m) b.resize(m);
+        assert(_ncols == x.size());
+        if (b.size() != _nrows) b.resize(_nrows);
         
-        for (int i = 0; i < m; i++){
+        for (int i = 0; i < _nrows; i++){
             b[i] = 0.0;
             for (int j = 0; j < n; j++){
-                b[i] += A.getCoefficient(i,j) * x[j];
+                b[i] += _A_mat.[i][j] * x[j];
             }
         }
     }
