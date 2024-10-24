@@ -14,6 +14,7 @@
 // ASSERT_NEAR(a, b, epsilon) to test if a and b are within epsilon of each
 // other.
 
+
 // test to see if we get an object after calling the default constructor
 template <typename T>
 TEST_CASE(checkDefaultConstructor)
