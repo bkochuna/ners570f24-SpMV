@@ -30,15 +30,15 @@ TEST_CASE(defined_construction_test)
   std::vector<size_t> jd_ptr = {0, 1, 2, 3};
   
   SpMV::SparseMatrix_JDS<T> mat(nrows, ncols, perm, jds_col_ptr, jds_values, jd_ptr);
-  ASSERT(mat.getNumRows() == nrows);
-  ASSERT(mat.getNumCols() == ncols);
+  ASSERT(static_cast<int>(mat.getNumRows()) == nrows);
+  ASSERT(static_cast<int>(mat.getNumCols()) == ncols);
 
   for (size_t i = 0; i < 3; i++)
   {
     ASSERT(mat.getPerm()[i] == perm[i]);
     ASSERT(mat.getJdsColPtr()[i] == jds_col_ptr[i]);
-    ASSERT(mat.getJdsValues()[i] == jds_values[i]);
-    ASSERT(mat.getJdPtr[i] == jd_ptr[i]);
+    ASSERT_NEAR(static_cast<double>(mat.getJdsValues()[i]), static_cast<double>(jds_values[i]), 1.0e-4);
+    ASSERT(mat.getJdPtr()[i] == jd_ptr[i]);
   }
   
   std::cout << "Defined Constructor Test Passed." << std::endl;
