@@ -24,10 +24,10 @@ namespace SpMV
         // Here gives the basic variables that ELL 
         // needs but the basic class doesn't include.
         //
-        size_t  lmax    =   0;                                  // Max row length
-        size_t  nnzs    =   0;                                  // number of nonzeros
-        size_t  *colIdx =   nullptr;                            // ELL column indice
-        fp_type *val    =   nullptr;                            // ELL values
+        size_t   _lmax   = 0;                                  // Max row length
+        size_t    nnzs    = 0;
+        size_t*  _colIdx = nullptr;                            // ELL column indice
+        fp_type* _val    = nullptr;                            // ELL values
 
     public:
         // (Default) Constructor & Destructor
@@ -43,7 +43,7 @@ namespace SpMV
 
         // Accessor for lmax
         size_t getLmax() const {
-            return lmax;
+            return _lmax;
         }
 
         // Accessor for nnzs
@@ -53,12 +53,12 @@ namespace SpMV
 
         // Accessor for colIdx
         const size_t* getColIdx() const {
-            return colIdx; // Return pointer to colIdx
+            return _colIdx; // Return pointer to colIdx
         }
 
         // Accessor for val
         const fp_type* getVal() const {
-            return val; // Return pointer to val
+            return _val; // Return pointer to val
         }
 
     }; // class SparseMatrix_ELL

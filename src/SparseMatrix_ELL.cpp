@@ -39,8 +39,8 @@ namespace SpMV
     template <class fp_type>
     SparseMatrix_ELL<fp_type>::~SparseMatrix_ELL()
     {
-        delete[]    colIdx;
-        delete[]    val;
+        delete[]    _colIdx;
+        delete[]    _val;
         std::cout << "Byebye from SparseMatrix_ELL Destructor~\n";
     }
 
@@ -57,16 +57,16 @@ namespace SpMV
             for(size_t i=0;i < this->_nrows; i++)
             {
                 std::cout << "Col Indices: [";
-                for (size_t j = 0; j < this->lmax - 1; j++)
+                for (size_t j = 0; j < this->_lmax - 1; j++)
                 {
-                    std::cout << this->colIdx[this->lmax * i + j] << ", ";
+                    std::cout << this->_colIdx[this->_lmax * i + j] << ", ";
                 }
-                std::cout << this->colIdx[this->lmax * i + this->lmax -1] << "], Values: [";
-                for (size_t j = 0; j < this->lmax - 1; j++)
+                std::cout << this->_colIdx[this->_lmax * i + this->_lmax -1] << "], Values: [";
+                for (size_t j = 0; j < this->_lmax - 1; j++)
                 {
-                    std::cout << this->val[this->lmax * i + j] << ", ";
+                    std::cout << this->_val[this->_lmax * i + j] << ", ";
                 }
-                std::cout << this->val[this->lmax * i + this->lmax -1] << "]" << std::endl;                
+                std::cout << this->_val[this->_lmax * i + this->_lmax -1] << "]" << std::endl;                
             }
         }
     }
@@ -81,7 +81,7 @@ namespace SpMV
         for (size_t i; i < this->nnzs; ++i){
             //multiply and increment 
             //this assumes that if val[i] is padded it will return 0 when multiplied 
-            b[count] = this->val[i] * x[this->colIdx[i]];
+            b[count] = this->_val[i] * x[this->_colIdx[i]];
             count += 1;
             //if we have gone through the column completly, reset the counter
             if (count == this->_nrows){
