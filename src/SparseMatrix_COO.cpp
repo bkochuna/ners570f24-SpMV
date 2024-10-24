@@ -1,6 +1,8 @@
 #include "SparseMatrix_COO.hpp"
 
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
 
 namespace SpMV
@@ -83,13 +85,37 @@ namespace SpMV
     template <class fp_type>
     void SparseMatrix_COO<fp_type>::viewCOO() const
     {
-        std::cout << "Hello from view SparseMatrix_COO!\n";
+        if(this->_state != building){
+            std::ofstream file("view.out");
+
+            size_t counter = 0;
+
+            fp_type zero = 0.0;
+
+            for(size_t i  = 0; i < this->_nrows; i ++)
+            {
+                for(size_t j = 0; j < this->_ncols; j ++)
+                {
+                    if(this->_J[counter] == j and this->_I[counter] == i)
+                    {
+                        file << std::to_string(this->_val[counter]);
+                        counter++;
+                    } else 
+                    {
+                        file << std::to_string(zero);
+                    }
+                    file << "\n";
+                }
+            }
+            std::cout << "Wrote matrix to view.out\n";
+        }
     }
 
     template <class fp_type>
     std::vector<fp_type> SparseMatrix_COO<fp_type>::matvec_COO(const std::vector<fp_type>& vec) const
     {
         std::cout << "Hello from SparseMatrix_COO matvec!\n";
+        return vec;
     }
 
     // finish add
