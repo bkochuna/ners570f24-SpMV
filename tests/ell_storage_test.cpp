@@ -1,5 +1,4 @@
 #include <SpMV.hpp>
-#pragma once
 #ifndef _LIBSPMV_
 #  error("unit_test_framework.hpp must be included AFTER SpMV.hpp!")
 #endif
