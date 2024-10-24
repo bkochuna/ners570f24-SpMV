@@ -150,7 +150,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     // Test that both colIdx are same element wise
     for (size_t i = 0; i < size_obt; ++i) 
     {
-    ASSERT(colIdx_obt[i] == colIdx_req[i]); 
+    ASSERT(colIdx_obt[i] == static_cast<size_t>(colIdx_req[i])); 
     }
    
    // Test that both val are same element wise
