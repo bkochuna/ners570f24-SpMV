@@ -264,7 +264,7 @@ namespace SpMV
         // Third column - jds_values
         // Fourth column - jd_ptr
 
-        size_t colWidth = 20;
+        int colWidth = 20;
         size_t permcount = 0;
         std::cout << std::left; // Left align
         std::cout << std::setw(colWidth) << "perm" << std::setw(colWidth) << "jds_col_ptr" << std::setw(colWidth) << "jds_values" << std::setw(colWidth) << "jd_ptr" << "\n";
@@ -279,7 +279,7 @@ namespace SpMV
                 }
                 else
                 {
-                    std:cout << std::setw(colWidth) << "";
+		    std::cout << std::setw(colWidth) << "";
                 }
 
                 std::cout << std::setw(colWidth) << this->jds_col_ptr[j];
