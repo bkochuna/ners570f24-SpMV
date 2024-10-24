@@ -4,7 +4,7 @@
 
 namespace SpMV
 {
-    template <class fp_type>
+    template <class fp_type> // Parameterized constructor
     SparseMatrix_DEN<fp_type>::SparseMatrix_DEN(const int nrows, const int ncols) :
          SparseMatrix<fp_type>::SparseMatrix(nrows, ncols)
     {
@@ -15,17 +15,16 @@ namespace SpMV
 
     }
 
-    template <class fp_type>
+    template <class fp_type> // Default constructor
     SparseMatrix_DEN<fp_type>::SparseMatrix_DEN() :
          SparseMatrix<fp_type>::SparseMatrix(1, 1)
     {
         std::cout << "Hello from SparseMatrix_DEN Default Constructor!\n";
-        this->setCoefficient(0, 0, 0.0);
         assembleStorage();
 
     }
 
-    template <class fp_type>
+    template <class fp_type> //Destructor
     SparseMatrix_DEN<fp_type>::~SparseMatrix_DEN()
     {
         std::cout << "Hello from SparseMatrix_DEN Destuctor!\n";
