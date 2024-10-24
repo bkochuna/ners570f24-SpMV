@@ -81,8 +81,8 @@ TEST_CASE(banded_nxn_mdiag_deld)
     }
     // initialize the required ELL arrays
 
-    std::vector<int> colIdx_req(nnz_rmax*n);
-    std::vector<T> val_req(nnz_rmax*n);
+    int colIdx_req(nnz_rmax*n);
+    T val_req(nnz_rmax*n);
 
     size_t id = 0;
     size_t nnz_c;
@@ -115,8 +115,8 @@ TEST_CASE(banded_nxn_mdiag_deld)
     // pass coefficients to assembleStorage()
     ptr_A.assembleStorage();
     // access the ELL quantities
-    std::vector<int>* colIdx_obt = ptr_A.getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
-    std::vector<T>* val_obt = ptr_A.getVal();
+    size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
+    T* val_obt = ptr_A.getVal();
 
     // Test that no column ID is below (-1)
     for (size_t i = 0; i < colIdx_obt->size(); ++i) 
@@ -227,8 +227,8 @@ TEST_CASE(banded_nxn_r0)
     // pass coefficients to assembleStorage()
     ptr_A.assembleStorage();
     // access the ELL quantities
-    std::vector<int>* colIdx_obt = ptr_A.getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
-    std::vector<T>* val_obt = ptr_A.getVal();
+    size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
+    T* val_obt = ptr_A.getVal();
     size_t lmax = ptr_A.getLmax();
     
     // Test that elements corresponding to r^th row are padded
@@ -267,8 +267,8 @@ TEST_CASE(all0_but1)
     // pass coefficients to assembleStorage()
     ptr_A.assembleStorage();
     // access the ELL quantities
-    std::vector<int>* colIdx_obt = ptr_A.getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
-    std::vector<T>* val_obt = ptr_A.getVal();
+    size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
+    T* val_obt = ptr_A.getVal();
     size_t lmax = ptr_A.getLmax();
     
     // assert that larget non-zero per row is 1
@@ -318,8 +318,8 @@ TEST_CASE(all0)
     // pass coefficients to assembleStorage()
     ptr_A.assembleStorage();
     // access the ELL quantities
-    std::vector<int>* colIdx_obt = ptr_A.getColIdx(); // it should be int instead of size_t since -1 will also be an element in it
-    std::vector<T>* val_obt = ptr_A.getVal();
+    size_t* colIdx_obt = ptr_A.getColIdx(); //int* // it should be int instead of size_t since -1 will also be an element in it
+    T* val_obt = ptr_A.getVal();
     //size_t lmax = ptr_A.getLmax();
     
     // assert that the pointers are null pointers
