@@ -76,15 +76,39 @@ namespace SpMV
     }
 
     template <class fp_type>
-    void SparseMatrix_COO<fp_type>::viewCOO() const
+    std::vector<fp_type> SparseMatrix_COO<fp_type>::matvec_COO(const std::vector<fp_type>& vec) const 
     {
-        std::cout << "Hello from view SparseMatrix_COO!\n";
+    // Preconditions
+    assert(vec.size() > 0 && "Input vector must not be empty");
+    assert(vec.size() == this->_ncols && "Input vector dimension must match matrix columns");
+    assert(this->_nnz > 0 && "Matrix must contain at least one non-zero element");
+    
+    // Class invariants - using _nnz for size checks since we're working with raw pointers
+    assert(this->_val != nullptr && "Values array must not be null");
+    assert(this->_I != nullptr && "Row indices array must not be null");
+    assert(this->_J != nullptr && "Column indices array must not be null");
+    
+    // Validate index bounds
+    for (size_t i = 0; i < this->_nnz; ++i) {
+        assert(this->_I[i] >= 0 && this->_I[i] < this->_nrows && 
+               "Row index out of bounds");
+        assert(this->_J[i] >= 0 && this->_J[i] < this->_ncols && 
+               "Column index out of bounds");
     }
 
-    template <class fp_type>
-    std::vector<fp_type> SparseMatrix_COO<fp_type>::matvec_COO(const std::vector<fp_type>& vec) const
-    {
-        std::cout << "Hello from SparseMatrix_COO matvec!\n";
+    // Initialize result vector with proper size and zero values
+    std::vector<fp_type> result_vector(this->_nrows, 0);
+    
+    // Perform matrix-vector multiplication
+    for (size_t k = 0; k < this->_nnz; ++k) {
+        result_vector[this->_I[k]] += vec[this->_J[k]] * this->_val[k];
+    }
+    
+    // Postconditions
+    assert(result_vector.size() == this->_nrows && 
+           "Result vector size must match matrix rows");
+    
+    return result_vector;
     }
 
     // finish add
