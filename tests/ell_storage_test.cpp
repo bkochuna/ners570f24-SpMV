@@ -120,12 +120,12 @@ TEST_CASE(banded_nxn_mdiag_deld)
     std::vector<T>* val_obt = ptr_A.getVal();
 
     // Test that no column ID is below (-1)
-    for (size_t i = 0; i < colIdx_obt.size(); ++i) 
+    for (size_t i = 0; i < colIdx_obt->size(); ++i) 
     {
         ASSERT((*colIdx_obt)[i] > -2); 
     }
     // Test that no value is given for padded element
-    for (size_t i = 0; i < colIdx_obt.size(); ++i) 
+    for (size_t i = 0; i < colIdx_obt->size(); ++i) 
     {
         if((*colIdx_obt)[i] == -1)
         {
@@ -134,7 +134,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     
     }
     // Test that no valid column has zero value
-    for (size_t i = 0; i < colIdx_obt.size(); ++i) 
+    for (size_t i = 0; i < colIdx_obt->size(); ++i) 
     {
         if((*colIdx_obt)[i] != -1)
         {
@@ -143,17 +143,17 @@ TEST_CASE(banded_nxn_mdiag_deld)
     
     }
     // Test that _req and _obt arrays have same size
-    ASSERT( colIdx_obt.size() == colIdx_req.size());
-    ASSERT( val_obt.size() == val_req.size());
+    ASSERT( colIdx_obt->size() == colIdx_req.size());
+    ASSERT( val_obt->size() == val_req.size());
 
     // Test that both colIdx are same element wise
-    for (size_t i = 0; i < colIdx_obt.size(); ++i) 
+    for (size_t i = 0; i < colIdx_obt->size(); ++i) 
     {
     ASSERT((*colIdx_obt)[i] == colIdx_req[i]); 
     }
    
    // Test that both val are same element wise
-    for (size_t i = 0; i < val_obt.size(); ++i) 
+    for (size_t i = 0; i < val_obt->size(); ++i) 
     {
     ASSERT_NEAR((*val_obt)[i], val_req[i], static_cast<T>(1e-5)); 
     }
@@ -275,8 +275,8 @@ TEST_CASE(all0_but1)
     // assert that larget non-zero per row is 1
     assert( lmax==1);
     // assert that the array sizes are n
-    ASSERT( colIdx_obt.size() == n);
-    ASSERT( val_obt.size() == n);
+    ASSERT( colIdx_obt>size() == n);
+    ASSERT( val_obt->size() == n);
 
     // Test that elements corresponding to all rows except n/2 are padded
     for (size_t i = 0; i < n; ++i) 
