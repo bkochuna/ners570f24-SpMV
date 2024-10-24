@@ -28,7 +28,7 @@ TEST_CASE(matrix_state_test)
     // call disassembleStorage() and assert the matrix state
     ptr_A.disassembleStorage();
     ASSERT(ptr_A.getState() == building);
-    delete(ptr_A);
+    
 
 }
 
@@ -161,7 +161,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     // call disassembleStorage() and assert the matrix state
     ptr_A.disassembleStorage();
 
-    delete(ptr_A);
+    
 }
 
 template <typename T>
@@ -241,7 +241,7 @@ TEST_CASE(banded_nxn_r0)
     
     // call disassembleStorage()
     ptr_A.disassembleStorage();
-    delete(ptr_A);
+    
     
 }
 
@@ -296,7 +296,7 @@ TEST_CASE(all0_but1)
     
     // call disassembleStorage()
     ptr_A.disassembleStorage();
-    delete(ptr_A);
+    
     
 }
 
@@ -324,12 +324,12 @@ TEST_CASE(all0)
     //size_t lmax = ptr_A.getLmax();
     
     // assert that the pointers are null pointers
-    ASSERT( colIdx_obt.empty());
-    ASSERT( val_obt.empty());
+    ASSERT( colIdx_obt->empty());
+    ASSERT( val_obt->empty());
 
     // call disassembleStorage() and assert the matrix state
     ptr_A.disassembleStorage();
-    delete(ptr_A);
+    
     
 }
 
