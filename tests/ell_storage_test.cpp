@@ -129,7 +129,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
     {
         if((*colIdx_obt)[i] == -1)
         {
-            ASSERT_NEAR((*val_obt)[i], static_cast<T>(0), 1e-5);  
+            ASSERT_NEAR((*val_obt)[i], static_cast<T>(0), static_cast<T>(1e-5));  
         }
     
     }
@@ -155,7 +155,7 @@ TEST_CASE(banded_nxn_mdiag_deld)
    // Test that both val are same element wise
     for (size_t i = 0; i < val_obt->size(); ++i) 
     {
-    ASSERT_NEAR((*val_obt)[i], val_req[i], 1e-5); 
+    ASSERT_NEAR((*val_obt)[i], val_req[i], static_cast<T>(1e-5)); 
     }
 
     // call disassembleStorage() and assert the matrix state
@@ -236,7 +236,7 @@ TEST_CASE(banded_nxn_r0)
     for (size_t i = r*lmax; i < (r+1)*lmax; ++i) 
     {
         ASSERT((*colIdx_obt)[i] == -1);
-        ASSERT_NEAR((*val_obt)[i],static_cast<fp_type>(0),1e-10);
+        ASSERT_NEAR((*val_obt)[i],static_cast<fp_type>(0),static_cast<T>(1e-10));
     }
     
     // call disassembleStorage()
@@ -284,12 +284,12 @@ TEST_CASE(all0_but1)
         if (i!= r)
         {
             ASSERT((*colIdx_obt)[i] == -1);
-            ASSERT_NEAR((*val_obt)[i],static_cast<T>(0),1e-10);
+            ASSERT_NEAR((*val_obt)[i],static_cast<T>(0),static_cast<T>(1e-10));
         }
         else
         {
             ASSERT((*colIdx_obt)[i] == static_cast<int>(c));
-            ASSERT_NEAR((*val_obt)[i],static_cast<T>(1),1e-10);
+            ASSERT_NEAR((*val_obt)[i],static_cast<T>(1),static_cast<T>(1e-10));
         }
         
     }
