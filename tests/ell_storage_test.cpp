@@ -20,11 +20,11 @@ TEST_CASE(matrix_state_test)
     SpMV::SparseMatrix<T>* ptr_A = new SpMV::SparseMatrix_ELL<T>(1, 1);
     ptr_A->setCoefficient(0,0,static_cast<T>(1));
     // assert the state of the matrix after setCoefficient/prior to assembleStorage()
-    ASSERT(ptr_A->_state == building);
+    ASSERT(ptr_A->getState() == building);
     // pass coefficients to assembleStorage()
     ptr_A->assembleStorage();
     // assert the state of the matrix after assembleStorage()
-    ASSERT(ptr_A->_state == assembled);
+    ASSERT(ptr_A->getState() == assembled);
     // call disassembleStorage() and assert the matrix state
     ptr_A->disassembleStorage();
     ASSERT(ptr_A->_state == building);
@@ -235,7 +235,7 @@ TEST_CASE(banded_nxn_r0)
     for (size_t i = r*lmax; i < (r+1)*lmax; ++i) 
     {
         ASSERT((*colIdx_obt)[i] == -1);
-        ASSERT_NEAR((*val_obt)[i],static_cast<fp_type>(0),static_cast<T>(1e-10));
+        ASSERT_NEAR((*val_obt)[i],static_cast<T>(0),static_cast<T>(1e-10));
     }
     
     // call disassembleStorage()
