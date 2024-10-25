@@ -104,6 +104,36 @@ namespace SpMV
     }
 
     template <class fp_type>
+    void SparseMatrix_ELL<fp_type>::_disassembleStorage()
+    {
+        assert(this->_state == MatrixState::assembled);
+        
+        // Set state to building so we can call setCoefficient
+        this->_state = MatrixState::building;
+        for(size_t i=0; i < this->_nrows; i++)
+        {
+            for(size_t n=0; n < this->_lmax; n++)
+            {
+                size_t j = this->_colIdx[this->_lmax*i + n];
+                if(j < this->_ncols+1)
+                {
+                    this->setCoefficient(i,j,this->_val[_lmax*i + n]);
+                }
+                    
+            }
+        }
+
+        // Clear ELL variables
+        this->_colIdx.reset();
+        this->_val.reset();
+        
+        //DBC checks on assuring state of class
+        assert(this->_state == MatrixState::building);
+        assert(this->_colIdx == nullptr);
+        assert(this->_val    == nullptr);
+    }
+
+    template <class fp_type>
     void SparseMatrix_ELL<fp_type>::view()
     {
         assert(this->_state == assembled);

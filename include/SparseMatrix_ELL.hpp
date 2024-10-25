@@ -26,10 +26,10 @@ namespace SpMV
         // needs but the basic class doesn't include.
         //
         size_t   _lmax   = 0;                                   // Max row length
-        std::unique_ptr< size_t [] > _colIdx;                   // ELL column indice
-        std::unique_ptr< fp_type[] > _val;                      // ELL values
+        std::unique_ptr< size_t [] > _colIdx = nullptr;         // ELL column indice
+        std::unique_ptr< fp_type[] > _val    = nullptr;         // ELL values
 
-        void _disassembleStorage() {assert(false);};
+        void _disassembleStorage();
 
     public:
         // (Default) Constructor & Destructor
