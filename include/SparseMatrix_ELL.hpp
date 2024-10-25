@@ -61,5 +61,8 @@ namespace SpMV
             return val; // Return pointer to val
         }
 
+	// Accessor for value with index (row, col)
+	fp_type getELLvalue(const size_t row, const size_t col) const;
+
     }; // class SparseMatrix_ELL
 } // namespace SpMV
