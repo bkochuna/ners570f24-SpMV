@@ -1,8 +1,8 @@
 #include <SpMV.hpp>
-
 #include <vector>
 #include <iostream>
 #include <cmath>
+
 // Testing library required for testing
 #include "unit_test_framework.hpp"
 
