@@ -29,6 +29,8 @@ namespace SpMV
         std::unique_ptr< size_t [] > _colIdx;                   // ELL column indice
         std::unique_ptr< fp_type[] > _val;                      // ELL values
 
+        void _disassembleStorage() {assert(false);};
+
     public:
         // (Default) Constructor & Destructor
         SparseMatrix_ELL(const int nrows, const int ncols);     // Constructor
@@ -36,6 +38,7 @@ namespace SpMV
         virtual ~SparseMatrix_ELL();                            // Destructor
 
         void assembleStorage();                                 // Assemble storage
+        void disassembleStorage() {this->_disassembleStorage();};
         void matvec(std::vector<fp_type> & b, const std::vector<fp_type> & x);       // Multiplication
         void view();                            // View
 
