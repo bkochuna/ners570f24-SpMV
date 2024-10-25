@@ -210,7 +210,7 @@ namespace SpMV
         assert(colId < this->_ncols);
 
         // define req. index in jds_values as indx
-        size_t indx = std::numeric_limits<size_t>::max();  // default is invalid index
+        size_t indx = (this->_nnz) + static_cast<size_t>(1);
         
         // find the index of the rowID in perm
         auto it = std::find(perm.begin(),perm.end(),rowId);
@@ -227,14 +227,14 @@ namespace SpMV
 
         }
 
-        if (indx==std::numeric_limits<size_t>::max())
+        if (indx==(this->_nnz) + static_cast<size_t>(1))
         {
-            std::cout << "No value stored in value array corr. to ["<< rowId <<","<<colId<<"]. Assuming it to be 0 and returning 0"<< std::endl;
+            //std::cout << "No value stored in value array corr. to ["<< rowId <<","<<colId<<"]. Assuming it to be 0 and returning 0"<< std::endl;
             return static_cast<fp_type>(0);
         }
         else
         {
-            std::cout << "Value stored in value array corr. to ["<< rowId <<","<<colId<<"]. Returning it"<< std::endl;
+            //std::cout << "Value stored in value array corr. to ["<< rowId <<","<<colId<<"]. Returning it"<< std::endl;
             return jds_values[indx];
         }
     }
