@@ -215,27 +215,16 @@ namespace SpMV
         // find the index of the rowID in perm
         auto it = std::find(perm.begin(),perm.end(),rowId);
         size_t rid = std::distance(perm.begin(),it); // rid is always defined since assert condition ensures this
-        for(size_t j=0;j<jd_ptr.size();j++)
+        size_t jd_start = jd_ptr[rid];
+        size_t jd_end = jd_ptr[rid+1];
+        for(size_t i=jd_start;i<jd_end;i++)
         {
-            size_t cid = jd_ptr[j] + rid;
-            if (cid < jds_col_ptr.size())
+            if(jds_col_ptr[i]==colId)
             {
-                if (j!=jd_ptr.size()-1 && cid < jd_ptr[j+1] )
-                {
-                    if(jds_col_ptr[cid]==colId)
-                    {
-                        indx = cid;
-                        break;
-                    }
-                }
-                else{
-                    if(jds_col_ptr[cid]==colId)
-                    {
-                        indx = cid;
-                        break;
-                    }
-                }
-            } 
+                indx = i;
+                break;
+            }
+
         }
 
         if (indx==std::numeric_limits<size_t>::max())
