@@ -64,7 +64,7 @@ namespace SpMV
         nnz_row.clear();
 
         //Allocate storage for ELLPACK format
-        this->_colIdx = std::make_unique< int []    >(this->_nrows*this->_lmax);
+        this->_colIdx = std::make_unique< size_t [] >(this->_nrows*this->_lmax);
         this->   _val = std::make_unique< fp_type[] >(this->_nrows*this->_lmax);
 
         //Assign values to ELLPACK format variables
@@ -88,7 +88,7 @@ namespace SpMV
             {
                 for(size_t j=nnz_row_offset[i]; j < this->_lmax; j++)
                 {
-                    this->_colIdx[this->_lmax*i + j] = -1;
+                    this->_colIdx[this->_lmax*i + j] = this->_ncols+1;
                     this->_val   [this->_lmax*i + j] = 0.0;
                 }
             }

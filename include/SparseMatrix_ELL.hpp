@@ -26,7 +26,7 @@ namespace SpMV
         // needs but the basic class doesn't include.
         //
         size_t   _lmax   = 0;                                   // Max row length
-        std::unique_ptr< int [] > _colIdx;                   // ELL column indice
+        std::unique_ptr< size_t [] > _colIdx;                   // ELL column indice
         std::unique_ptr< fp_type[] > _val;                      // ELL values
 
     public:
@@ -35,9 +35,9 @@ namespace SpMV
         SparseMatrix_ELL();                                     // Default constructor
         virtual ~SparseMatrix_ELL();                            // Destructor
 
-    void assembleStorage();                                     // Assemble storage
-    void matvec(std::vector<fp_type> & b, const std::vector<fp_type> & x);       // Multiplication
-    void view();                            // View
+        void assembleStorage();                                 // Assemble storage
+        void matvec(std::vector<fp_type> & b, const std::vector<fp_type> & x);       // Multiplication
+        void view();                            // View
 
     // Accessor methods
 
@@ -47,7 +47,7 @@ namespace SpMV
         }
 
         // Accessor for colIdx
-        const int* getColIdx() const {
+        const size_t* getColIdx() const {
             return _colIdx.get(); // Return pointer to colIdx
         }
 
