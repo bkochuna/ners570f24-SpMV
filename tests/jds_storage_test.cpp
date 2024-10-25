@@ -6,150 +6,87 @@
 #include "unit_test_framework.hpp"
 #include "../include/SparseMatrix_JDS.hpp"
 
-// Use ASSERT(condition) to test if a condition is true.
-// Direct comparison of floating point numbers is not recommended, so we define
-// ASSERT_NEAR(a, b, epsilon) to test if a and b are within epsilon of each
-// other.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+#pragma GCC diagnostic pop
+const float eps = .0000001; //tolerance
 
-// Create a unit test
-// start with templating
-const float eps = .0000001
-template <typename fp_type>
-TEST_CASE(testJDSAssembleStorage) 
-{
-  // test the getters
-  // turn off warnings
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wfloat-equal"
-  #pragma GCC diagnostic pop
-  // call the class in the header file, SparseMatrix_JDS
-  SparseMatrix_JDS = jds
-  // Initialize variables for testing
-  // permutation index (row), column index, value in the index
-  std::vector<size_t> const perm = {0, 1, 2};
-  std::vector<size_t> const colIdx = {1, 2, 1, 2, 1};
-  std::vector<fp_type> const values = {2., 4., 6., 8., 10.};
-  
-  // call assemble storage
-  jsd.assembleStorage(perm,colIdx,values);
-  // perform unit tests
-  // build testing arrays. should be the values from the assembled jds class
-  std::vector<size_t> const perm_test = {0, 2, 3};
-  std::vector<size_t> const colIdx_test = {0, 1, 1, 2, 2};
-  std::vector<fp_type> const values_test = {2., 4., 8., 6., 10.};
-
-  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
-  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
-  ASSERT_NEAR(jds.getValues(), values_test, eps);
-
-} // testJDSAssembleStorage
-
+// The test for assemble/disassemble storage will be simple. I'm writing
+// 2 tests, isAssembled, and isDisassembled. It will ensure that matrix is receiving
+// values, that the matrix is built, and the matrix storage is destroyed.
+// since the matrix input format isn't symmetric, I'm not writing a test for
+// an input matrix in symmetric format.
 
 template <typename fp_type>
-TEST_CASE(testJDSAssembleStorageSym) 
+TEST_CASE(jdsIsAssembled)
 {
-  // test case for symmetric matrices
-  // test the getters
-  // turn off warnings
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wfloat-equal"
-  #pragma GCC diagnostic pop
-  // call the class in the header file, SparseMatrix_JDS
-  SparseMatrix_JDS = jds;
-  // Initialize variables for testing. MUST USE SIZE_T'S
-  // permutation index (row), column index, value in the index
-  std::vector<size_t> const perm = {0, 1, 2};
-  std::vector<size_t> const colIdx = {0, 0, 1, 1, 2, 2};
-  std::vector<fp_type> const values = {2., 4., 6., 8., 10., 12.};
-  
-  // call assemble storage
-  jsd.assembleStorage(perm,colIdx,values);
-  // perform unit tests
-  // build testing arrays. should be the values from the assembled jds class
-  std::vector<size_t> const perm_test = {0, 2, 4};
-  std::vector<size_t> const colIdx_test = {0, 0, 1, 1, 2, 2};
-  std::vector<fp_type> const values_test = {2., 4., 6., 8., 10., 12.};
+  // init 6x6 test matrix
+  SpMV::SparseMatrix_JDS<fp_type> jds(6, 6);
 
-  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
-  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
-  ASSERT_NEAR(jds.getValues(), values_test, eps);
-}//testJDSAssembleStorageSym
+  // add elements to SpMV::_buildCoeff in COO format
+  // Define the matrix values with specified non-zero counts per row
+  jds._buildCoeff[{0, 0}] = 1.0; // r0, zero indexed
+  jds._buildCoeff[{0, 1}] = 2.0;
+  jds._buildCoeff[{0, 2}] = 3.0;
+  jds._buildCoeff[{1, 1}] = 4.0; // r1
+  jds._buildCoeff[{1, 3}] = 5.0;
+  jds._buildCoeff[{2, 0}] = 6.0; // r2
+  jds._buildCoeff[{2, 1}] = 7.0;
+  jds._buildCoeff[{2, 2}] = 8.0;
+  jds._buildCoeff[{2, 3}] = 9.0;
+  jds._buildCoeff[{2, 4}] = 10.0;
+  // row 3: zero elements. make sure that the assembleStorage() can handle rows
+  // of all zeros
+  jds._buildCoeff[{4, 0}] = 11.0; // r4
+  jds._buildCoeff[{5, 2}] = 12.0; // r5
+
+  // Call the assembleStorage()
+  jds.assembleStorage();
+
+  // THIS IS WHAT THE MATRIX SHOULD BE
+  // i calculated this by hand
+  std::vector<size_t> perm_ref = {2, 0, 1, 5, 4, 3};
+  std::vector<size_t> colIdx_ref = {0, 1, 2, 3, 4, 0, 1, 2, 1, 3, 0, 2};
+  std::vector<fp_type> values_ref = {6., 7., 8., 9., 10., 1., 2., 3., 4., 5., 11., 12.};
+
+  // Call the assembleStorage()
+  jds.assembleStorage();
+
+  // test assembled
+  ASSERT(jds.getState() == assembled);
+
+  // Compare perm, colIdx, and values vectors against expected reference values
+  ASSERT(perm_test.size() == perm_ref.size());
+
+  for (size_t i = 0; i < perm_ref.size(); ++i)
+    ASSERT_NEAR(perm_test[i], perm_ref[i], eps);
+
+  ASSERT(colIdx_test.size() == colIdx_ref.size());
+  for (size_t i = 0; i < colIdx_ref.size(); ++i){
+      ASSERT_NEAR(colIdx_test[i], colIdx_ref[i], eps);
+      ASSERT_NEAR(values_test[i], values_ref[i], eps);
+  }
+
+} // jdsIsAssembled
 
 template <typename fp_type>
-TEST_CASE(testJDSAssembleStorageEmptyRow) 
+TEST_CASE(jdsIsDisassembled)
 {
-  // test case for symmetric matrices
-  // test the getters
-  // turn off warnings
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wfloat-equal"
-  #pragma GCC diagnostic pop
-  // call the class in the header file, SparseMatrix_JDS
-  SparseMatrix_JDS = jds;
-  // Initialize variables for testing. MUST USE SIZE_T'S
-  // permutation index (row), column index, value in the index
-  std::vector<size_t> const perm = {0, 1, 2};
-  std::vector<size_t> const colIdx = {0, 0, 1};
-  std::vector<fp_type> const values = {2., 4., 6.};
-  
-  // call assemble storage
-  jsd.assembleStorage(perm,colIdx,values);
-  // perform unit tests
-  // build testing arrays. should be the values from the assembled jds class
-  std::vector<size_t> const perm_test = {0, 2, 4};
-  std::vector<size_t> const colIdx_test = {0, 0, 1};
-  std::vector<fp_type> const values_test = {2., 4., 6.};
+  // init 3x3 test matrix
+  SpMV::SparseMatrix<fp_type> jds(3, 3);
+  // call the assembleStorage function, make sure it's undefined by the end
+  jds.disassembleStorage();
+  ASSERT(jds.getState() == undefined);
 
-  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
-  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
-  ASSERT_NEAR(jds.getValues(), values_test, eps);
-} //testJDSAssembleStorageEmptyRow
-
-template <typename fp_type>
-TEST_CASE(testJDSdisassembleStorage) 
-{
-  // test the getters
-  // turn off warnings
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wfloat-equal"
-  #pragma GCC diagnostic pop
-  // call the class in the header file, SparseMatrix_JDS
-  SparseMatrix_JDS = jds;
-  // Initialize variables for testing
-  // permutation index (row), column index, value in the index
-  std::vector<size_t> const perm = {0, 1, 2};
-  std::vector<size_t> const colIdx = {1, 2, 1, 2, 1};
-  std::vector<fp_type> const values = {2., 4., 6., 8., 10.};
-  
-  // call assemble storage
-  jsd.assembleStorage(perm,colIdx,values);
-  // perform unit tests
-  // build testing arrays. should be the values from the assembled jds class
-  std::vector<size_t> const perm_test = {0, 2, 3};
-  std::vector<size_t> const colIdx_test = {0, 1, 1, 2, 2};
-  std::vector<fp_type> const values_test = {2., 4., 8., 6., 10.};
-
-  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
-  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
-  ASSERT_NEAR(jds.getValues(), values_test, eps);
-
-  // now check disassemble storage
-  auto [perm_dis, colIdx_dis, values_dis] = jds.disassembleStorage();
-  ASSERT_NEAR(jds.getPerm(), perm_test, eps);
-  ASSERT_NEAR(jds.getColIdx(), colIdx_test, eps);
-  ASSERT_NEAR(jds.getValues(), values_test, eps);
-
-} // testJDSDisassembleStorage
-
+}//jdsIsDisassembled
 
 // Create a test suite
-TEST_SUITE(JDS_storage) 
+template <typename fp_type>
+TEST_SUITE(jdsStorage)
 {
   // Run the unit test when the suite is run
-  TEST(testJDSAssembleStorage);
-  TEST(testJDSAssembleStorageSym);
-  TEST(testJDSAssembleStorageEmptyRow);
-  TEST(testJDSDisassembleStorage);
+  TEST(jdsIsAssembled<fp_type>);
+  TEST(jdsIsDisassembled<fp_type>);
 } // my_suite
 
 auto
@@ -158,7 +95,7 @@ main() -> int
   // Run the unit tests. If a test fails, the program will print failure info
   // and return 1.
   // run for floats and doubles
-  RUN_SUITE(JDS_storage<float>);
-  RUN_SUITE(JDS_storage<double>);
-  return 0; 
+  RUN_SUITE(jdsStorage<float>);
+  RUN_SUITE(jdsStorage<double>);
+  return 0;
 }
